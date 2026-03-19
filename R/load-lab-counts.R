@@ -1,3 +1,12 @@
+#' Load enrolment numbers in FoS lab courses
+#'
+#' Load data frame of total enrolment numbers and numbers of students registered
+#' with Centre for Accessiblity (CfA) in lab courses of the Faculty of Science
+#' (FoS) from September 2024 to August 2025.
+#'
+#' @returns A data frame.
+#'
+#' @export
 load_lab_counts <- function() {
   here::here(
     "data/raw/cfa-student-data",

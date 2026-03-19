@@ -1,3 +1,11 @@
+#' Load CfA students
+#'
+#' Load data frame of Faculty of Science students registered with Centre for
+#' Accessiblity from September 2024 to August 2025.
+#'
+#' @returns A data frame.
+#'
+#' @export
 load_students <- function() {
   here::here(
     "data/raw/cfa-student-data",
