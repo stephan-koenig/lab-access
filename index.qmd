@@ -1,0 +1,54 @@
+---
+title: "Lab accessibility report"
+format: html
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+library(dplyr)
+library(fs)
+library(gt)
+library(purrr)
+
+dir_walk(here::here("R"), source)
+```
+
+## Data
+
+### Centre for Accessibility
+
+Data was provided by Michael Segovia, project manager at the Centre for Accessibility (CfA) for working with Skylight.
+
+`students`:
+
+- File: `01_Active Students in Faculty of Science + program info September 2024 - August 2025.xlsx`
+- ClockWork data
+- Period: September 2024 -- August 2025
+- CfA did not start collecting program-related information in their system until mid- to late-2025. As a result, only students who remained active in the CfA system at that time appear in this data snapshot. Students who may have graduated and/or de-activated prior to this snapshot would not be included.
+- Entries for students in the Faculty of Science registered with CfA
+
+`lab_requests`:
+
+- File: `02_Students with accommodations in Laboratory sections September 2024 - August 2025.xlsx`
+- ClockWork data
+- Period: September 2024 -- August 2025
+- CfA did not start collecting program-related information in their system until mid- to late-2025. As a result, only students who remained active in the CfA system at that time appear in this data snapshot. Students who may have graduated and/or de-activated prior to this snapshot would not be included.
+- Number of students with accommodations registered in at least one course section designated as "Laboratory"
+- `status` of student's accommodation letter request
+  - `No Accommodation Request` students was eligible for accommodations, but did not download a letter
+  - `InstructorInfoMissing` indicates that no instructor record is available for that particular section on Workday (probably equivalent to `No Accommodation Request`, will be interpreted as such in analysis below)
+
+`lab_counts`:
+
+- File: `03_CfA Edits - Science_lab_counts_2024W_2025-07-10.xlsx`
+- Number of students with accommodations registered in at least one course section designated as "Laboratory"
+
+```{r}
+#| label: load-data
+#| echo: false
+students <- load_students()
+lab_requests <- load_lab_requests()
+lab_counts <- load_lab_counts()
+```
