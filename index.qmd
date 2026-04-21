@@ -11,6 +11,7 @@ library(dplyr)
 library(fs)
 library(gt)
 library(purrr)
+library(tidyr)
 
 dir_walk(here::here("R"), source)
 ```
@@ -79,4 +80,34 @@ students |>
 ```
 
 Faculty of Science students registered with the Centre for Accessibility by program.
+:::
+
+I decided to collate the data by program and count a student in a combined program once for each program (for example, a student in "Combined Major in Computer Science, Biology" is counted once for "Computer Science" and once for "Biology".)
+
+::: {#tbl-students-by-collated-program}
+```{r}
+#| label: students-by-collated-program
+#| echo: false
+students_n <- nrow(students)
+students |>
+  select(program_one, program_two) |>
+  pivot_longer(
+    everything(),
+    names_to = NULL,
+    values_to = "program",
+    values_drop_na = TRUE
+  ) |>
+  count(program) |>
+  mutate(
+    percent = n / students_n
+  ) |>
+  gt() |>
+  fmt_percent(columns = percent) |>
+  cols_label(
+    program = "Program",
+    n = "FoS students registered with CfA"
+  )
+```
+
+Faculty of Science students registered with the Centre for Accessibility by collated program.
 :::
