@@ -52,3 +52,31 @@ students <- load_students()
 lab_requests <- load_lab_requests()
 lab_counts <- load_lab_counts()
 ```
+
+## Analysis
+
+### FoS students registered with CfA
+
+Because of "Major", "Honours" and many "Combined" programs, there are many different programs resulting from those combinations.
+
+::: {#tbl-students-by-program}
+```{r}
+#| label: students-by-program
+#| echo: false
+students |>
+  count(program_of_study_name) |>
+  mutate(
+    program_of_study_name = replace_values(
+      program_of_study_name,
+      "Bachelor of Science (Vancouver)" ~ "First year B.Sc."
+    )
+  ) |>
+  gt() |>
+  cols_label(
+    program_of_study_name = "Program",
+    n = "FoS students registered with CfA"
+  )
+```
+
+Faculty of Science students registered with the Centre for Accessibility by program.
+:::

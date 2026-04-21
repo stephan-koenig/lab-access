@@ -14,5 +14,13 @@ load_students <- function() {
       "September 2024 - August 2025.xlsx"
     )
   ) |>
-    readxl::read_xlsx(.name_repair = janitor::make_clean_names)
+    readxl::read_xlsx(.name_repair = janitor::make_clean_names) |>
+    dplyr::filter_out(
+      program_of_study_name %in%
+        c(
+          "Unclassified (Vancouver)",
+          # Master of Data Science is not an undergraduate program
+          "Master of Data Science (Vancouver)"
+        )
+    )
 }
