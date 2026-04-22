@@ -1,0 +1,71 @@
+subject,full_name,in_ubc_v_faculty_of_science
+APBI_V,Applied Animal Biology,FALSE
+APSC_O,Applied Science (Okanagan),FALSE
+APSC_V,Applied Science (Vancouver),FALSE
+ASTR_V,Astronomy,TRUE
+ATSC_V,Atmospheric Science,TRUE
+BEST_V,Bioenergy Strategic Management,FALSE
+BIOC_O,Biochemistry (Okanagan),FALSE
+BIOC_V,Biochemistry (Vancouver),TRUE
+BIOL_V,Biology,TRUE
+BMEG_V,Biomedical Engineering,FALSE
+BOTA_V,Botany,TRUE
+CAPS_V,Cellular and Physiological Sciences,FALSE
+CHBE_V,Chemical and Biological Engineering,FALSE
+CHEM_V,Chemistry,TRUE
+CIVL_V,Civil Engineering,FALSE
+CNPS_V,Counselling Psychology,FALSE
+COGS_V,Cognitive Systems Program,TRUE
+COLX_V,Computational Linguistics,FALSE
+COMM_V,Commerce and Business Administration,FALSE
+CONS_V,Conservation,FALSE
+COSC_O,Computer Science (Okanagan),FALSE
+CPEN_V,Computer Engineering,FALSE
+CPSC_V,Computer Science (Vancouver),TRUE
+DATA_O,Data Science (Okanagan),FALSE
+DES_V,Design,FALSE
+DSCI_V,Data Science (Vancouver),TRUE
+EDCP_V,Curriculum and Pedagogy,FALSE
+ELEC_V,Electrical Engineering,FALSE
+ENGR_O,Engineering (Okanagan),FALSE
+ENPH_V,Engineering Physics,TRUE
+ENVE_V,Environmental Engineering,FALSE
+ENVR_V,Environmental Science,TRUE
+EOSC_V,Earth and Ocean Sciences,TRUE
+FNH_V,Food Nutrition and Health,FALSE
+FOOD_V,Food Science,FALSE
+FRE_V,Food and Resource Economics,FALSE
+FRST_V,Forestry,FALSE
+GEM_V,Geomatics for Environmental Management,FALSE
+GEOG_V,Geography,FALSE
+GEOS_V,Geospatial Information Science,FALSE
+HES_O,Health and Exercise Sciences (Okanagan),FALSE
+IGEN_V,Integrated Engineering,FALSE
+KIN_V,Kinesiology,FALSE
+LAW_V,Law,FALSE
+LFS_V,Land and Food Systems,FALSE
+LING_V,Linguistics,FALSE
+MANU_V,Manufacturing Engineering,FALSE
+MATH_V,Mathematics,TRUE
+MDIA_V,Media Studies,FALSE
+MECH_V,Mechanical Engineering,FALSE
+MICB_V,Microbiology,TRUE
+MINE_V,Mining Engineering,FALSE
+MTRL_V,Materials Engineering,FALSE
+NRSG_O,Nursing (Okanagan),FALSE
+NSCI_V,Neuroscience Undergraduate,TRUE
+NURS_V,Nursing,FALSE
+PCTH_V,Pharmacology and Therapeutics,FALSE
+PHAR_V,Pharmacy,FALSE
+PHRM_V,Pharmaceutical Sciences,FALSE
+PHTH_V,Physical Therapy,FALSE
+PHYS_O,Physics (Okanagan),FALSE
+PHYS_V,Physics (Vancouver),TRUE
+PPGA_V,Public Policy and Global Affairs,FALSE
+RHSC_V,Rehabilitation Science,FALSE
+SCIE_V,Science,TRUE
+SOIL_V,Soil Science,FALSE
+STAT_V,Statistics,TRUE
+THTR_V,Theatre,FALSE
+UFOR_V,Urban Forestry,FALSE
+WOOD_V,Wood Products Processing,FALSE

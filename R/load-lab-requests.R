@@ -8,6 +8,9 @@
 #'
 #' @export
 load_lab_requests <- function() {
+  subject_codes <- here::here("data/subject-codes.csv") |>
+    readr::read_csv(col_types = c("ccl"))
+
   here::here(
     "data/raw/cfa-student-data",
     paste0(
@@ -15,5 +18,6 @@ load_lab_requests <- function() {
       "September 2024 - August 2025.xlsx"
     )
   ) |>
-    readxl::read_xlsx(.name_repair = janitor::make_clean_names)
+    readxl::read_xlsx(.name_repair = janitor::make_clean_names) |>
+    dplyr::left_join(subject_codes, by = dplyr::join_by(subject))
 }
