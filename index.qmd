@@ -9,7 +9,10 @@ format: html
 #| message: false
 library(dplyr)
 library(fs)
+library(ggplot2)
+library(glue)
 library(gt)
+library(plotly)
 library(purrr)
 library(tidyr)
 
@@ -166,4 +169,64 @@ lab_requests |>
 
 About half of the Faculty of Science students registered with the Centre for Accessibility requested accommodations in lab courses.
 All of these requests were approved.
+:::
+
+I think FoS courses with close to 0 or 100% request rate would be of particular interest.
+What does it mean if students do not ask for accomodations?
+Are their needs already met?
+Or do they feel like they can't ask for anything?
+Conversely, when students readily ask for accomodations is it a sign of a class climate that encourages them to make their needs known?
+Or does it indicate that things are so dire that they feel compelled to formally make requests to find at least some relief?
+
+I decided to show the data by the number of registered students since extreme values (of 0 or a 100%) are more likely in courses when their number is small.
+
+::: {#fig-requests-by-course}
+```{r}
+#| label: requests-by-course
+#| echo: false
+approved <- lab_requests |>
+  filter(in_ubc_v_faculty_of_science) |>
+  mutate(
+    status = status == "Approved"
+  ) |>
+  summarize(
+    registered_n = n(),
+    requests_n = sum(status),
+    requests_proportion = requests_n / registered_n,
+    .by = c(subject, course)
+  ) |>
+  arrange(subject, course)
+
+chem_v_123 <- approved |>
+  filter(subject == "CHEM_V", course == "123")
+
+limits <- c(0, 60)
+
+approved_by_course <- approved |>
+  ggplot(
+    aes(
+      x = registered_n,
+      y = requests_n,
+      text = glue(
+        "{subject} {course}<br>",
+        "Registered students: {registered_n}<br>",
+        "Requests: {requests_n} ({vec_fmt_percent(requests_proportion)})"
+      )
+    )
+  ) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, colour = "grey") +
+  coord_fixed(
+    xlim = c(0, 60),
+    ylim = c(0, 60)
+  ) +
+  facet_wrap(vars(subject)) +
+  theme_minimal()
+
+ggplotly(approved_by_course, tooltip = "text")
+```
+
+Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA).
+Registered students [n], number of FoS students registered with CfA; Requests [n], number of accomodation requests by those students; grey diagonal line, points close to or on the diagonal line indicate courses where most registered students requested accomodations (points can be never above line).
+CHEM_V 123 (with `{r} chem_v_123$registered_n` registered students and  `{r} chem_v_123$requests_n` requests) not shown because of scale of plots.
 :::
