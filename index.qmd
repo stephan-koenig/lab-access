@@ -111,3 +111,59 @@ students |>
 
 Faculty of Science students registered with the Centre for Accessibility by collated program.
 :::
+
+### FoS students registered with CfA in laboratory courses
+
+In general, requests for accomodations by FoS students in courses got all approved and the data contains no examples when a request was rejected.
+
+::: {#tbl-requests}
+```{r}
+#| label: requests
+#| echo: false
+lab_requests |>
+  # filter(in_ubc_v_faculty_of_science) |>
+  mutate(
+    course_faculty = recode_values(
+      in_ubc_v_faculty_of_science,
+      TRUE ~ "FoS",
+      FALSE ~ "non-FoS"
+    ),
+    status = replace_values(
+      status,
+      # `InstructorInfoMissing` probably means a student did no make a request
+      "InstructorInfoMissing" ~ "No Accommodation Request",
+      "PendingWaitingForStudent" ~ "Pending---Waiting For Student"
+    )
+  ) |>
+  count(course_faculty, status) |>
+  gt(
+    groupname_col = "course_faculty",
+    row_group_as_column = TRUE
+  ) |>
+  summary_rows(
+    columns = n,
+    fns = list(label = "Total", id = "total", fn = "sum"),
+    missing_text = ""
+  ) |>
+  fmt_markdown() |>
+  tab_stubhead("Faculty offering course") |>
+  cols_label(
+    status = "Request status",
+    n = "FoS enrollments registered with CfA"
+  ) |>
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = list(
+      cells_column_labels(),
+      cells_column_spanners(),
+      cells_stub_summary(),
+      cells_stubhead()
+    )
+  )
+```
+
+About half of the Faculty of Science students registered with the Centre for Accessibility requested accommodations in lab courses.
+All of these requests were approved.
+:::
