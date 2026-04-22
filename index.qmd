@@ -7,13 +7,16 @@ format: html
 #| label: setup
 #| echo: false
 #| message: false
+library(conflicted)
 library(dplyr)
+conflicts_prefer(dplyr::filter)
 library(fs)
 library(ggplot2)
 library(glue)
 library(gt)
 library(plotly)
 library(purrr)
+library(scales)
 library(tidyr)
 
 dir_walk(here::here("R"), source)
@@ -197,36 +200,32 @@ approved <- lab_requests |>
   ) |>
   arrange(subject, course)
 
-chem_v_123 <- approved |>
-  filter(subject == "CHEM_V", course == "123")
-
-limits <- c(0, 60)
+overall_requests_proportion <-
+  sum(approved$requests_n) /
+  sum(approved$registered_n)
 
 approved_by_course <- approved |>
   ggplot(
     aes(
-      x = registered_n,
-      y = requests_n,
+      x = requests_proportion,
+      y = as.factor(registered_n),
       text = glue(
         "{subject} {course}<br>",
-        "Registered students: {registered_n}<br>",
+        "CfA-registered students: {registered_n}<br>",
         "Requests: {requests_n} ({vec_fmt_percent(requests_proportion)})"
       )
     )
   ) +
+  geom_vline(xintercept = overall_requests_proportion, colour = "pink") +
   geom_point() +
-  geom_abline(slope = 1, intercept = 0, colour = "grey") +
-  coord_fixed(
-    xlim = c(0, 60),
-    ylim = c(0, 60)
-  ) +
-  facet_wrap(vars(subject)) +
-  theme_minimal()
+  scale_x_continuous(labels = label_percent(suffix = "")) +
+  facet_wrap(vars(subject), scales = "free_y") +
+  theme_minimal() +
+  labs(x = "Requests [%]", y = "Registered [n]")
 
 ggplotly(approved_by_course, tooltip = "text")
 ```
 
 Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA).
-Registered students [n], number of FoS students registered with CfA; Requests [n], number of accomodation requests by those students; grey diagonal line, points close to or on the diagonal line indicate courses where most registered students requested accomodations (points can be never above line).
-CHEM_V 123 (with `{r} chem_v_123$registered_n` registered students and  `{r} chem_v_123$requests_n` requests) not shown because of scale of plots.
+Registered [n], number of FoS students registered with CfA in a given course; Requests [%], percentage of those students requesting accomodations; pink vertical line, overall percentage (`{r} percent(overall_requests_proportion)`) of those students requesting accommodations across all FoS lab courses.
 :::
