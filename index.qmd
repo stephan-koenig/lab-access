@@ -241,17 +241,18 @@ Registered \[n\], number of FoS students registered with CfA in a given course; 
 lab_counts |>
   inner_join(approved, by = join_by(subject, course)) |>
   mutate(
-    any_faculty = cfa_students_n / total_enrolled,
+    non_fos = (cfa_students_n - registered_n) / total_enrolled,
     fos = registered_n / total_enrolled
   ) |>
   pivot_longer(
-    cols = c(any_faculty, fos),
+    cols = c(non_fos, fos),
     names_to = "origin",
     values_to = "proportion"
   ) |>
   ggplot(aes(x = proportion, y = subject, colour = origin)) +
-  geom_jitter(alpha = 0.5)
+  geom_jitter(height = 0.2, alpha = 0.5) +
+  scale_x_continuous(label = label_percent(suffix = ""))
 ```
 
-CfA-registered students from FoS and other faculties in Faculty of Science laboratory courses.
+In Faculty of Science laboratory courses, CfA-registered students from FoS and other faculties are represented in equal measures.
 :::
