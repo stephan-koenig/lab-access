@@ -238,17 +238,44 @@ Registered \[n\], number of FoS students registered with CfA in a given course; 
 ```{r}
 #| label: registered-students-in-fos-labs
 #| echo: false
-lab_counts |>
+cfa_students_in_fos_labs <- lab_counts |>
   inner_join(approved, by = join_by(subject, course)) |>
   mutate(
-    non_fos = (cfa_students_n - registered_n) / total_enrolled,
-    fos = registered_n / total_enrolled,
-    delta = fos - non_fos
+    non_fos_proportion = (cfa_students_n - registered_n) / total_enrolled,
+    fos_proportion = registered_n / total_enrolled
   ) |>
-  ggplot(aes(x = delta, y = subject)) +
-  geom_jitter(height = 0.2, alpha = 0.5) +
-  scale_x_continuous(label = label_percent(suffix = ""), limits = c(-1, 1))
+  ggplot(
+    aes(
+      x = non_fos_proportion,
+      y = fos_proportion,
+      text = glue(
+        "{subject} {course}<br>",
+        "Total enrolment: {total_enrolled}<br>",
+        "Total CfA-registered students: {cfa_students_n}<br>",
+        "FoS CfA-registered students: {registered_n} ",
+        "({vec_fmt_percent(fos_proportion)})<br>",
+        "Other CfA-registered students: {cfa_students_n - registered_n} ",
+        "({vec_fmt_percent(non_fos_proportion)})<br>"
+      )
+    )
+  ) +
+  geom_abline(slope = 1, intercept = 0, colour = "grey") +
+  geom_point(alpha = 0.5) +
+  scale_x_continuous(label = label_percent(suffix = ""), limits = c(0, 0.3)) +
+  scale_y_continuous(label = label_percent(suffix = ""), limits = c(0, 0.3)) +
+  coord_fixed() +
+  facet_wrap(vars(subject)) +
+  theme_minimal() +
+  labs(
+    x = "FoS CfA-registered students [%]",
+    y = "CfA-registered students other faculties [%]"
+  )
+
+ggplotly(cfa_students_in_fos_labs, tooltip = "text")
 ```
 
-In Faculty of Science laboratory courses, CfA-registered students from FoS and other faculties are represented in equal measures.
+CfA-registered students in the Faculty of Science (FoS) and other faculties enrolled in FoS laboratory courses.
+FoS CfA-registered students \[%\], proportion of FoS CfA-registered students; CfA-registered students other faculties \[%\], proportion of CfA-registered students in other faculties.
+Each data point represents one course, and if it is located on or close to the diagonal line, the proportion of CfA-students from within and outside of FoS are about the same.
+Courses below the line had more FoS CfA-students than from other faculties, and above the line those with more from other faculties than FoS.
 :::
