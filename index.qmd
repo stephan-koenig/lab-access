@@ -231,3 +231,27 @@ ggplotly(approved_by_course, tooltip = "text")
 Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA).
 Registered \[n\], number of FoS students registered with CfA in a given course; Requests \[%\], percentage of those students requesting accomodations; pink horizontal line, overall percentage (`{r} percent(overall_requests_proportion)`) of those students requesting accommodations across all FoS lab courses.
 :::
+
+### Overall students registered with CFA in FoS laboratory courses
+
+::: {#fig-registered-students-in-fos-labs}
+```{r}
+#| label: registered-students-in-fos-labs
+#| echo: false
+lab_counts |>
+  inner_join(approved, by = join_by(subject, course)) |>
+  mutate(
+    any_faculty = cfa_students_n / total_enrolled,
+    fos = registered_n / total_enrolled
+  ) |>
+  pivot_longer(
+    cols = c(any_faculty, fos),
+    names_to = "origin",
+    values_to = "proportion"
+  ) |>
+  ggplot(aes(x = proportion, y = subject, colour = origin)) +
+  geom_jitter(alpha = 0.5)
+```
+
+CfA-registered students from FoS and other faculties in Faculty of Science laboratory courses.
+:::
