@@ -2,26 +2,26 @@ Package: labaccess
 Title: Analyze University of British Columbia Lab Accessibilty data
 Version: 0.0.0.9000
 Authors@R:
-    person(
-        "Stephan",
-        "König",
-        email = "stephan.koenig@gmail.com",
-        role = c("aut", "cre"),
-        comment = c(ORCID = "0000-0002-1597-3628")
-    )
-Description: Functions to analyze data as part of the lab accessibilty project
-    of Skylight in the Faculty of Science at the University of British Columbia.
+    person("Stephan", "König", , "stephan.koenig@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-1597-3628"))
+Description: Functions to analyze data as part of the lab accessibilty
+    project of Skylight in the Faculty of Science at the University of
+    British Columbia.
 License: CC BY 4.0
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Imports:
     cellranger,
     dplyr,
+    fs,
     here,
     janitor,
+    keyring,
+    qs2,
+    qualtRics,
     readxl,
     tidyr
-Suggests: 
+Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
