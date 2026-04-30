@@ -2,14 +2,19 @@
 % Please edit documentation in R/load-survey.R
 \name{load_survey}
 \alias{load_survey}
-\title{Load lab accessibility survey of undergraduates in FoS}
+\title{Load Qualtrics survey data}
 \usage{
-load_survey()
+load_survey(survey_name, file)
+}
+\arguments{
+\item{survey_name}{Survey name on Qualtrics.}
+
+\item{file}{File to write to or load from.}
 }
 \value{
 A data frame.
 }
 \description{
-Load data frame of lab accessibility Qualtrics survey data of undergraduates
-in the Faculty of Science (FoS) conducted by Skylight in March 2026.
+Load data frame of Qualtrics survey data. If no local copy exists, also
+downloads survey from Qualtrics and saves a local copy.
 }
