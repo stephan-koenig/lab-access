@@ -83,13 +83,12 @@ survey <- load_undergraduate_lab_accessibility_survey()
 ::::: panel-tabset
 ##### Program
 
-I decided to collate the data by program and count a student in a combined specialization once for each program (for example, a student in "Combined Major in Computer Science, Biology" is counted once for "Computer Science" and once for "Biology".)
+I decided to collate the data by program and count a student in a combined specialization once for each program (for example, a student in "Combined Major in Computer Science, Biology" is counted once for "Computer Science" and once for "Biology".) See @tbl-students-by-specialization for a more granular view by specialization.
 
 ::: {#tbl-students-by-program}
 ```{r}
-#| label: students-by-collated-program
+#| label: students-by-program
 #| echo: false
-students_n <- nrow(students)
 students |>
   select(program_one, program_two) |>
   pivot_longer(
@@ -98,42 +97,34 @@ students |>
     values_to = "program",
     values_drop_na = TRUE
   ) |>
-  count(program) |>
-  mutate(
-    percent = n / students_n
+  set_variable_labels(
+    program = "Program"
   ) |>
-  gt() |>
-  fmt_percent(columns = percent) |>
-  cols_label(
-    program = "Program",
-    n = "FoS students registered with CfA"
-  )
+  tbl_summary(include = program)
 ```
 
 Faculty of Science students registered with the Centre for Accessibility by program.
 :::
 
-##### By specialization
+##### Specialization
 
-Because of "Major", "Honours" and many "Combined" programs, there are many different specializations resulting from those combinations.
+This table shows the unprocessed data, where the different combinations of "Major", "Honours" and "Combined" choices result in many different specializations.
 
 ::: {#tbl-students-by-specialization}
 ```{r}
 #| label: students-by-specialization
 #| echo: false
 students |>
-  count(program_of_study_name) |>
   mutate(
     program_of_study_name = replace_values(
       program_of_study_name,
       "Bachelor of Science (Vancouver)" ~ "First year B.Sc."
     )
   ) |>
-  gt() |>
-  cols_label(
-    program_of_study_name = "Program",
-    n = "FoS students registered with CfA"
-  )
+  set_variable_labels(
+    program_of_study_name = "Specialization"
+  ) |>
+  tbl_summary(include = program_of_study_name)
 ```
 
 Faculty of Science students registered with the Centre for Accessibility by specialization.
