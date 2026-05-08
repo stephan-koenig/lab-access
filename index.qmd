@@ -58,6 +58,13 @@ Data was provided by Michael Segovia, project manager at the Centre for Accessib
 - File: `03_CfA Edits - Science_lab_counts_2024W_2025-07-10.xlsx`
 - Number of students with accommodations registered in at least one course section designated as "Laboratory"
 
+### Lab accessibility undergraduate survey
+
+`survey`:
+
+- Qualtrics data from "Lab accessibility in Science---undergraduate student survey March 2026" conducted by Skylight
+- The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS)
+
 ```{r}
 #| label: load-data
 #| echo: false
