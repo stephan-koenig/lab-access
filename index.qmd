@@ -71,6 +71,7 @@ Data was provided by Michael Segovia, project manager at the Centre for Accessib
 students <- load_students()
 lab_requests <- load_lab_requests()
 lab_counts <- load_lab_counts()
+survey <- load_undergraduate_lab_accessibility_survey()
 ```
 
 ## Analysis
@@ -293,19 +294,54 @@ Each data point represents one course, and if it is located on or close to the d
 Courses below the line had more FoS CfA-students than from other faculties, and above the line those with more from other faculties than FoS.
 :::
 
-### Lab accessibility in Science—undergraduate student survey March 2026
+### Lab accessibility undergraduate survey
 
 #### Program area and progress
 
-::: {#tbl-survey-participants}
+The following data show program information of students who participated in the survey.
+It would be of interest to get total student numbers in each program to see if the survey is a representative sample.
+
+::::::: panel-tabset
+#### Plot
+
+::::: {#fig-program-area-and-progress layout="[[1], [1]]"}
+::: {#fig-program-area}
 ```{r}
-#| label: survey-participants
+#| label: program-area
 #| echo: false
-survey <- load_undergraduate_lab_accessibility_survey()
+survey |>
+  render_lollipop_graph(program)
+```
+
+Program area
+:::
+
+::: {#fig-program-progress}
+```{r}
+#| label: program-progress
+#| echo: false
+survey |>
+  render_lollipop_graph(course_level_focus)
+```
+
+Program progress
+:::
+
+[Program area and progress (using course level as proxy) of participants in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026. The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS). Percentages give the proportion of survey participants.]{#program-area-and-progress}
+{{< contents program-area-and-progress >}} Figure of the same data as in @tbl-program-area-and-progress.
+:::::
+
+#### Table
+
+::: {#tbl-program-area-and-progress}
+```{r}
+#| label: program-area-and-progress-table
+#| echo: false
 survey |>
   select(program, course_level_focus) |>
   tbl_summary(include = c(program, course_level_focus))
 ```
 
-Program areas and progress in program (using course level as proxy) of undergraduate students during September 2025 to April 2026 who participated in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+{{< contents program-area-and-progress >}} Table of the same data as in @fig-program-area-and-progress.
 :::
+:::::::
