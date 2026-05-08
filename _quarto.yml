@@ -4,4 +4,6 @@ project:
     - "*.qmd"
     - "!LICENSE.md"
 
-format: html
+format:
+  html:
+    theme: styles/theme.scss
