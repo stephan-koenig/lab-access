@@ -80,33 +80,12 @@ survey <- load_undergraduate_lab_accessibility_survey()
 
 #### FoS students registered with CfA
 
-Because of "Major", "Honours" and many "Combined" programs, there are many different programs resulting from those combinations.
+::::: panel-tabset
+##### Program
+
+I decided to collate the data by program and count a student in a combined specialization once for each program (for example, a student in "Combined Major in Computer Science, Biology" is counted once for "Computer Science" and once for "Biology".)
 
 ::: {#tbl-students-by-program}
-```{r}
-#| label: students-by-program
-#| echo: false
-students |>
-  count(program_of_study_name) |>
-  mutate(
-    program_of_study_name = replace_values(
-      program_of_study_name,
-      "Bachelor of Science (Vancouver)" ~ "First year B.Sc."
-    )
-  ) |>
-  gt() |>
-  cols_label(
-    program_of_study_name = "Program",
-    n = "FoS students registered with CfA"
-  )
-```
-
-Faculty of Science students registered with the Centre for Accessibility by program.
-:::
-
-I decided to collate the data by program and count a student in a combined program once for each program (for example, a student in "Combined Major in Computer Science, Biology" is counted once for "Computer Science" and once for "Biology".)
-
-::: {#tbl-students-by-collated-program}
 ```{r}
 #| label: students-by-collated-program
 #| echo: false
@@ -131,8 +110,35 @@ students |>
   )
 ```
 
-Faculty of Science students registered with the Centre for Accessibility by collated program.
+Faculty of Science students registered with the Centre for Accessibility by program.
 :::
+
+##### By specialization
+
+Because of "Major", "Honours" and many "Combined" programs, there are many different specializations resulting from those combinations.
+
+::: {#tbl-students-by-specialization}
+```{r}
+#| label: students-by-specialization
+#| echo: false
+students |>
+  count(program_of_study_name) |>
+  mutate(
+    program_of_study_name = replace_values(
+      program_of_study_name,
+      "Bachelor of Science (Vancouver)" ~ "First year B.Sc."
+    )
+  ) |>
+  gt() |>
+  cols_label(
+    program_of_study_name = "Program",
+    n = "FoS students registered with CfA"
+  )
+```
+
+Faculty of Science students registered with the Centre for Accessibility by specialization.
+:::
+:::::
 
 #### FoS students registered with CfA in laboratory courses
 
