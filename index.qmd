@@ -80,16 +80,20 @@ survey <- load_undergraduate_lab_accessibility_survey()
 
 #### FoS students registered with CfA
 
-::::: panel-tabset
-##### Program
+::::::: panel-tabset
+##### Program (plot)
 
+::: {#program-vs-specialization}
 I decided to collate the data by program and count a student in a combined specialization once for each program (for example, a student in "Combined Major in Computer Science, Biology" is counted once for "Computer Science" and once for "Biology".) See @tbl-students-by-specialization for a more granular view by specialization.
+:::
 
-::: {#tbl-students-by-program}
+{{< contents program-vs-specialization >}}
+
+::: {#fig-students-by-program}
 ```{r}
-#| label: students-by-program
+#| label: students-by-program-plot
 #| echo: false
-students |>
+students_by_program <- students |>
   select(program_one, program_two) |>
   pivot_longer(
     everything(),
@@ -99,11 +103,28 @@ students |>
   ) |>
   set_variable_labels(
     program = "Program"
-  ) |>
+  )
+
+students_by_program |>
+  render_lollipop_graph(program)
+```
+
+[Faculty of Science students registered with the Centre for Accessibility by program ($N = `{r} nrow(students)`$, but students in combined programs are counted double).]{#students-by-program}{{< contents students-by-program >}} Same data as in @tbl-students-by-program as a plot.
+:::
+
+##### Program (table)
+
+{{< contents program-vs-specialization >}}
+
+::: {#tbl-students-by-program}
+```{r}
+#| label: students-by-program-table
+#| echo: false
+students_by_program |>
   tbl_summary(include = program)
 ```
 
-Faculty of Science students registered with the Centre for Accessibility by program.
+{{< contents students-by-program >}} Same data as in @fig-students-by-program as a table.
 :::
 
 ##### Specialization
@@ -129,7 +150,7 @@ students |>
 
 Faculty of Science students registered with the Centre for Accessibility by specialization.
 :::
-:::::
+:::::::
 
 #### FoS students registered with CfA in laboratory courses
 
