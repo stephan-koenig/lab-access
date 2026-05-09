@@ -156,6 +156,9 @@ Faculty of Science students registered with the Centre for Accessibility by spec
 
 In general, requests for accomodations by FoS students in courses got all approved and the data contains no examples when a request was rejected.
 
+:::::: panel-tabset
+##### Faculty-level
+
 ::: {#tbl-requests}
 ```{r}
 #| label: requests
@@ -207,6 +210,8 @@ lab_requests |>
 About half of the Faculty of Science students registered with the Centre for Accessibility requested accommodations in lab courses.
 All of these requests were approved.
 :::
+
+##### Course-level
 
 I think FoS courses with close to 0 or 100% request rate would be of particular interest.
 What does it mean if students do not ask for accomodations?
@@ -263,6 +268,7 @@ ggplotly(approved_by_course, tooltip = "text")
 Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA).
 Registered \[n\], number of FoS students registered with CfA in a given course; Requests \[%\], percentage of those students requesting accomodations; pink horizontal line, overall percentage (`{r} percent(overall_requests_proportion)`) of those students requesting accommodations across all FoS lab courses.
 :::
+::::::
 
 #### Overall students registered with CFA in FoS laboratory courses
 
