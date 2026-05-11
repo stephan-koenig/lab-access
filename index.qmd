@@ -3,6 +3,7 @@ title: "Lab accessibility report"
 format:
   html:
     embed-resources: true
+    output-file: "cfa-data-and-undergraduate-survey.html"
 ---
 
 ```{r}
