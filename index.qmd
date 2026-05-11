@@ -211,6 +211,54 @@ About half of the Faculty of Science students registered with the Centre for Acc
 All of these requests were approved.
 :::
 
+##### Subject-level
+
+::: {#fig-requests-by-subject}
+```{r}
+#| label: requests-by-program
+#| echo: false
+approved <- lab_requests |>
+  filter(in_ubc_v_faculty_of_science) |>
+  mutate(
+    status = status == "Approved"
+  ) |>
+  summarize(
+    registered_n = n(),
+    requests_n = sum(status),
+    .by = c(subject)
+  )
+
+students_by_subject <- lab_counts |>
+  summarize(
+    total_enrolled = sum(total_enrolled),
+    .by = c(subject)
+  )
+
+approved |>
+  inner_join(students_by_subject, by = join_by(subject)) |>
+  mutate(
+    registered_proportion = registered_n / total_enrolled,
+    request_proportion = requests_n / total_enrolled
+  ) |>
+  select(subject, ends_with("proportion")) |>
+  pivot_longer(
+    ends_with("proportion"),
+    names_to = "type",
+    names_pattern = "(.*)_proportion",
+    values_to = "proportion"
+  ) |>
+  ggplot(aes(x = proportion, y = fct_rev(subject), fill = type)) +
+  geom_bar(position = "identity", stat = "identity", alpha = 0.3) +
+  scale_x_continuous(labels = percent) +
+  labs(x = "Proportion", y = "Subject")
+```
+
+Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA) in each subject.
+All numbers are relative to total enrollment in courses.
+A single student might be represented multiple times across these data as they might be enrolled in more than one course.
+Registered, percentage of FoS students registered with CfA relative to total enrollment; Requests, percentage of FoS students registered with CfA requesting accomodations relative to total enrollment.
+:::
+
 ##### Course-level
 
 I think FoS courses with close to 0 or 100% request rate would be of particular interest.
