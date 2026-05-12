@@ -16,6 +16,7 @@ conflicts_prefer(dplyr::filter)
 library(forcats)
 library(fs)
 library(ggplot2)
+library(ggstats)
 library(glue)
 library(gt)
 library(gtsummary)
@@ -418,3 +419,32 @@ survey |>
 {{< contents program-area-and-progress >}} Table of the same data as in @fig-program-area-and-progress.
 :::
 :::::::
+
+#### Climate in laboratory courses
+
+::: {#fig-lab-climate}
+```{r}
+#| label: lab-climate
+#| echo: false
+survey |>
+  select(q4, q40, q41, q43, q44) |>
+  # TODO: Add N for each question
+  update_variable_labels_with(\(column_name) {
+    str_remove(
+      column_name,
+      paste0(
+        "3[a-f]\\. Please indicate to what extent you agree with the following ",
+        "statement:(\\n){3,4}"
+      )
+    )
+  }) |>
+  gglikert(y_label_wrap = 35) +
+  theme(legend.location = "plot")
+```
+
+Climate in laboratory courses.
+Questions focusing on inclusion and belonging in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+
+<!-- TODO: Add qualitative analysis of Q33 -->
