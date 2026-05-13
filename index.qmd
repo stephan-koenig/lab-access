@@ -452,6 +452,9 @@ The target population was undergraduate students during September 2025 to April 
 
 #### Accomodation needs
 
+::::: panel-tabset
+##### General
+
 ::: {#fig-accomodation-needs}
 ```{r}
 #| label: accomodations-needs
@@ -492,3 +495,42 @@ survey |>
 Participant responses to the multiple selection question "`{r} survey$q6 |> var_label() |> str_remove_all("5. | \\(Select all that apply\\) - Selected Choice")`" in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
+
+##### Other
+
+::: {#fig-other-accomodation-needs}
+```{r}
+#| label: other-accomodations-needs
+#| echo: false
+survey |>
+  select(response_id, q7, q7_4_text) |>
+  separate_longer_delim(q7, delim = regex(",(?! )")) |>
+  mutate(
+    q7_4_text = replace_when(
+      q7_4_text,
+      # TODO: Check with team about categorization of conditions in "Other"
+      str_detect(q7_4_text, "Sickness") ~
+        "Temporary condition (e.g., Broken bone, injury)",
+      str_detect(q7_4_text, "Height|processing|Chronic|Gender|n/a") ~ NA
+    ),
+    q7 = if_else(q7 == "Other, please specify:", q7_4_text, q7)
+  ) |>
+  filter_out(is.na(q7)) |>
+  distinct(response_id, q7) |>
+  copy_labels_from(survey) |>
+  render_lollipop_graph(q7) +
+  scale_y_discrete(labels = label_wrap(50)) +
+  labs(
+    title = survey$q7 |>
+      var_label() |>
+      str_remove_all("6. | \\(Select all that apply\\) - Selected Choice"),
+    x = "Respondents [n]",
+    y = NULL
+  ) +
+  theme(plot.title = element_textbox_simple(), plot.title.position = "plot")
+```
+
+Participant responses to the multiple selection question "`{r} survey$q7 |> var_label() |> str_remove_all("6. | \\(Select all that apply\\) - Selected Choice")`" in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+:::::
