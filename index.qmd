@@ -17,6 +17,7 @@ library(forcats)
 library(fs)
 library(ggplot2)
 library(ggstats)
+library(ggtext)
 library(glue)
 library(gt)
 library(gtsummary)
@@ -448,3 +449,46 @@ The target population was undergraduate students during September 2025 to April 
 :::
 
 <!-- TODO: Add qualitative analysis of Q33 -->
+
+#### Accomodation needs
+
+::: {#fig-accomodation-needs}
+```{r}
+#| label: accomodations-needs
+#| echo: false
+survey |>
+  select(response_id, q6, q6_9_text) |>
+  separate_longer_delim(q6, delim = regex(",(?! )")) |>
+  mutate(
+    q6_9_text = if_else(
+      str_detect(
+        q6_9_text,
+        # TODO: Check with team about categorization of conditions in "Other"
+        "pain|cold|hyperhydrosis|scoliosis|Tremor"
+      ),
+      paste0(
+        "Chronic health condition (e.g., Diabetes, MS, POTS, ",
+        "immunocompromised, Chronic Fatigue Syndrome, etc.)"
+      ),
+      q6_9_text
+    ),
+    q6 = if_else(q6 == "Other, please specify:", q6_9_text, q6)
+  ) |>
+  filter_out(is.na(q6)) |>
+  distinct(response_id, q6) |>
+  copy_labels_from(survey) |>
+  render_lollipop_graph(q6) +
+  scale_y_discrete(labels = label_wrap(50)) +
+  labs(
+    title = survey$q6 |>
+      var_label() |>
+      str_remove_all("5. | \\(Select all that apply\\) - Selected Choice"),
+    x = "Respondents [n]",
+    y = NULL
+  ) +
+  theme(plot.title = element_textbox_simple(), plot.title.position = "plot")
+```
+
+Participant responses to the multiple selection question "`{r} survey$q6 |> var_label() |> str_remove_all("5. | \\(Select all that apply\\) - Selected Choice")`" in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
