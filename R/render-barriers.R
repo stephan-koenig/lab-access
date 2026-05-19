@@ -5,7 +5,7 @@ render_barriers <- function(data) {
       wrap = 35
 
       preamble <- paste0(
-        "7[ab]. To what extent, if any, the following course elements have ",
+        "7[abc]. To what extent, if any, the following course elements have ",
         "presented barriers to your full participation in a laboratory course ",
         "in your intended or chosen major\\? *\n\n\n\nPlease use the following ",
         "scale: *\nNo Impact: did not affect my participation\n\nMinor Impact: ",
