@@ -19,6 +19,13 @@ load_undergraduate_lab_accessibility_survey <- function() {
 
   column_map <- qualtRics::extract_colmap(survey)
   likert_levels <- survey$q4 |> levels()
+  impact_levels <- c(
+    "No Impact",
+    "Minor Impact",
+    "Moderate Impact",
+    "Major Impact",
+    "Not Applicable"
+  )
 
   processed_survey <- survey |>
     # TODO: Not quite sure yet if that is the best cutoff
@@ -91,6 +98,12 @@ load_undergraduate_lab_accessibility_survey <- function() {
         tidyselect::starts_with("q16"),
         \(column) {
           factor(column, levels = likert_levels, ordered = TRUE)
+        }
+      ),
+      dplyr::across(
+        tidyselect::starts_with("q11"),
+        \(column) {
+          factor(column, levels = impact_levels, ordered = TRUE)
         }
       )
     ) |>
