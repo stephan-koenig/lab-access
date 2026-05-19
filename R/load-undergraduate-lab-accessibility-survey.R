@@ -18,6 +18,7 @@ load_undergraduate_lab_accessibility_survey <- function() {
   )
 
   column_map <- qualtRics::extract_colmap(survey)
+  likert_levels <- survey$q4 |> levels()
 
   processed_survey <- survey |>
     # TODO: Not quite sure yet if that is the best cutoff
@@ -85,9 +86,16 @@ load_undergraduate_lab_accessibility_survey <- function() {
           "Not Taking any classes (e.g., Co-Op)",
           "Mix (e.g., multiple course levels, courses and Co-Op, etc.)",
           "Prefer not to say"
-        ))
+        )),
+      dplyr::across(
+        tidyselect::starts_with("q16"),
+        \(column) {
+          factor(column, levels = likert_levels, ordered = TRUE)
+        }
+      )
     ) |>
     dplyr::select(!c(program_two, additional_programs)) |>
+    labelled::copy_labels_from(survey) |>
     labelled::set_variable_labels(
       program = "Program area of current or intended major",
       course_level_focus = "Course level (a proxy for year in program)"

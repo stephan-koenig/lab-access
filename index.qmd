@@ -555,3 +555,33 @@ The target population was undergraduate students during September 2025 to April 
 :::
 
 <!-- TODO: Add qualitative analysis of Q9 -->
+
+#### Sense of belonging
+
+::: {#fig-major-belonging}
+```{r}
+#| label: major-belonging
+#| echo: false
+survey |>
+  select(starts_with("q16")) |>
+  # TODO: Add N for each question
+  update_variable_labels_with(\(column_name) {
+    str_remove(
+      column_name,
+      paste0(
+        "d. Please indicate to what extent you agree with the following ",
+        "statements:\n\nIn my current or intended major, - "
+      )
+    )
+  }) |>
+  gglikert(y_label_wrap = 35) +
+  labs(title = "In my current or intended major,") +
+  theme(
+    plot.title.position = "plot",
+    legend.location = "plot"
+  )
+```
+
+Participant responses to questions about their sense of belonging in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
