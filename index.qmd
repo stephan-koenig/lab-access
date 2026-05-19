@@ -534,3 +534,24 @@ Participant responses to the multiple selection question "`{r} survey$q7 |> var_
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 :::::
+
+#### Major and Centre of Accessibility
+
+::: {#tbl-major-and-cfa}
+```{r}
+#| label: major-and-cfa
+#| echo: false
+survey |>
+  select(q8, q10) |>
+  filter_out(is.na(q8), is.na(q10)) |>
+  update_variable_labels_with(\(column_name) {
+    str_remove(column_name, "[a-f]\\. ")
+  }) |>
+  tbl_summary(include = c(q8, q10))
+```
+
+Participant responses in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+
+<!-- TODO: Add qualitative analysis of Q9 -->
