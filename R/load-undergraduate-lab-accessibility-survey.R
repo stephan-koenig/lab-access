@@ -101,7 +101,7 @@ load_undergraduate_lab_accessibility_survey <- function() {
         }
       ),
       dplyr::across(
-        tidyselect::starts_with("q11"),
+        tidyselect::starts_with(c("q11", "q30")),
         \(column) {
           factor(column, levels = impact_levels, ordered = TRUE)
         }

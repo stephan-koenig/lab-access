@@ -588,6 +588,9 @@ The target population was undergraduate students during September 2025 to April 
 
 #### Barriers
 
+::::: panel-tabset
+##### Delivery
+
 ::: {#fig-delivery}
 ```{r}
 #| label: delivery
@@ -600,3 +603,19 @@ survey |>
 Participant responses to questions about course delivery barriers in lab courses in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
+
+##### Environment
+
+::: {#fig-environment}
+```{r}
+#| label: environment
+#| echo: false
+survey |>
+  select(starts_with("q30")) |>
+  render_barriers()
+```
+
+Participant responses to questions about environmental barriers in lab courses in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+:::::
