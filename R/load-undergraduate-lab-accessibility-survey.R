@@ -26,6 +26,11 @@ load_undergraduate_lab_accessibility_survey <- function() {
     "Major Impact",
     "Not Applicable"
   )
+  support_experience_levels <- c(
+    "No Experience",
+    "Had it, Not Helpful",
+    "Had it, Helpful"
+  )
 
   processed_survey <- survey |>
     # TODO: Not quite sure yet if that is the best cutoff
@@ -104,6 +109,12 @@ load_undergraduate_lab_accessibility_survey <- function() {
         tidyselect::starts_with(c("q11", "q30", "q31")),
         \(column) {
           factor(column, levels = impact_levels, ordered = TRUE)
+        }
+      ),
+      dplyr::across(
+        tidyselect::matches("q13_[1-7]$"),
+        \(column) {
+          factor(column, levels = support_experience_levels, ordered = TRUE)
         }
       )
     ) |>

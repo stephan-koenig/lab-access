@@ -636,3 +636,67 @@ The target population was undergraduate students during September 2025 to April 
 ::::::
 
 <!-- TODO: Add qualitative analysis of Q12 -->
+
+#### Supports
+
+::: {#fig-supports}
+```{r}
+#| label: supports
+#| echo: false
+#| fig-height: 7
+survey |>
+  select(matches("q13_[1-7]$")) |>
+  # TODO: Add N for each question
+  update_variable_labels_with(\(column_name) {
+    wrap = 35
+
+    preamble <- paste0(
+      "9\\. From the following list of resources, supports and modifications, ",
+      "which ones have you experienced and found helpful to enable you to ",
+      "fully participate in laboratory activities\\? \\(Select all that ",
+      "apply\\)\n\nNo Experience: I have not experienced this\nHad it, Not ",
+      "helpful:  I have experienced this but did not find it helpful\nHad it, ",
+      "helpful: I have experienced this and found it helpful - "
+    )
+
+    element <- column_name |>
+      str_remove(preamble)
+
+    category <- element |>
+      str_extract(".*?(?=\\s*\\()") |>
+      str_wrap(width = wrap)
+    examples <- element |>
+      str_remove(".*?\\s*(?=\\()") |>
+      str_wrap(width = wrap)
+
+    if (is.na(category)) {
+      return(paste0("**", examples, "**"))
+    }
+
+    paste0("**", category, "**\n", examples) |>
+      str_replace_all("\n", "<br>")
+  }) |>
+  gglikert(
+    cutoff = 0,
+    add_totals = FALSE
+  ) +
+  labs(
+    title = paste0(
+      "From the following list of resources, supports and modifications, ",
+      "which ones have you experienced and found helpful to enable you to ",
+      "fully participate in laboratory activities?"
+    )
+  ) +
+  theme(
+    plot.title = element_textbox_simple(),
+    plot.title.position = "plot",
+    axis.text.y = element_markdown(),
+    legend.location = "plot"
+  )
+```
+
+Participant responses to questions about experience with supports in lab courses in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+
+<!-- TODO: Add qualitative analysis of Q14, Q15 and Q34 -->
