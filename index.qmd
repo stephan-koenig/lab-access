@@ -67,6 +67,7 @@ Data was provided by Michael Segovia, project manager at the Centre for Accessib
 
 - Qualtrics data from "Lab accessibility in Science---undergraduate student survey March 2026" conducted by Skylight
 - The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS)
+- All student responses were systematically reviewed and coded by Alexis Gonzalez using an inductive coding approach. Codes were generated based on patterns and themes identified within the responses. In some cases, multiple codes were applied to a single response to more accurately capture the complexity of students' ideas. A codebook was developed to document code definitions and ensure consistency throughout the analysis. Following coding, related codes were grouped into broader categories to support thematic analysis. In this vein, some codes were used in more than one question (note: examples were omitted when the code was used more than once).
 
 ```{r}
 #| label: load-data
@@ -76,6 +77,20 @@ lab_requests <- load_lab_requests()
 lab_counts <- load_lab_counts()
 survey <- load_undergraduate_lab_accessibility_survey()
 ```
+
+#### Codebooks
+
+##### Lab climate
+
+::: {#tbl-lab-climate-codebook}
+```{r}
+#| label: lab-climate-codebook
+#| echo: false
+tabulate_codebook("q33")
+```
+
+Codes used for the question "`{r} var_label(survey$q33) |> str_remove("4\\. ")`".
+:::
 
 ## Analysis
 
@@ -423,9 +438,12 @@ survey |>
 
 #### Climate in laboratory courses
 
-::: {#fig-lab-climate}
+::::: panel-tabset
+##### Likert
+
+::: {#fig-lab-climate-likert}
 ```{r}
-#| label: lab-climate
+#| label: lab-climate-likert
 #| echo: false
 survey |>
   select(q4, q40, q41, q43, q44) |>
@@ -448,7 +466,35 @@ Questions focusing on inclusion and belonging in the "Lab accessibility in Scien
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-<!-- TODO: Add qualitative analysis of Q33 -->
+##### Coded
+
+::: {#fig-lab-climate-coded}
+```{r}
+#| label: lab-climate-coded
+#| echo: false
+climate_coded <- survey |>
+  separate_longer_delim(q33, "; ") |>
+  filter_out(is.na(q33)) |>
+  mutate(q33 = fct_infreq(q33))
+
+climate_coded_question <- var_label(survey$q33) |> str_remove("4\\. ")
+climate_top_5 <- climate_coded |>
+  count(q33)
+
+climate_coded |>
+  render_lollipop_graph(q33) +
+  labs(title = climate_coded_question, x = "Frequency [n]", y = NULL) +
+  theme(plot.title = element_textbox_simple(), plot.title.position = "plot")
+```
+
+Coded open-ended responses to the question "`{r} climate_coded_question`".
+"`{r} climate_top_5$q33[1]`" was the most frequently coded ($n$ = `{r} climate_top_5$n[1]`), followed by "`{r} climate_top_5$q33[2]`" ($n$ = `{r} climate_top_5$n[2]`) and "`{r} climate_top_5$q33[3]`" ($n$ = `{r} climate_top_5$n[3]`).
+Several challenges were also identified, including "`{r} climate_top_5$q33[4]`" ($n$ = `{r} climate_top_5$n[4]`) and "`{r} climate_top_5$q33[5]`" ($n$ = `{r} climate_top_5$n[5]`).
+Less frequently reported codes captured negative or situational experiences such as unclear assessment, accessibility challenges, and group work dynamics (codebook see @tbl-lab-climate-codebook).
+The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+:::::
 
 #### Accomodation needs
 

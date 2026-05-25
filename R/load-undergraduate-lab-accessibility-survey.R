@@ -32,6 +32,20 @@ load_undergraduate_lab_accessibility_survey <- function() {
     "Had it, Helpful"
   )
 
+  sheet_names <- stringr::str_c("q", c(33, 9, 14, 15, 34))
+  coded_responses <- load_coded_responses(
+    here::here(
+      "data",
+      "raw",
+      "survey",
+      paste0(
+        "RAW data_LabAccessibility in Science-Student Survey ",
+        "March 2026_April 1 2026.xlsx"
+      )
+    ),
+    sheet_names
+  )
+
   processed_survey <- survey |>
     # TODO: Not quite sure yet if that is the best cutoff
     dplyr::filter_out(progress < 43) |>
@@ -118,7 +132,10 @@ load_undergraduate_lab_accessibility_survey <- function() {
         }
       )
     ) |>
-    dplyr::select(!c(program_two, additional_programs)) |>
+    dplyr::select(
+      !c(program_two, additional_programs, dplyr::all_of(sheet_names))
+    ) |>
+    dplyr::inner_join(coded_responses, by = dplyr::join_by(response_id)) |>
     labelled::copy_labels_from(survey) |>
     labelled::set_variable_labels(
       program = "Program area of current or intended major",
