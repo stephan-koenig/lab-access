@@ -80,6 +80,8 @@ survey <- load_undergraduate_lab_accessibility_survey()
 
 #### Codebooks
 
+::::: panel-tabset
+
 ##### Lab climate
 
 ::: {#tbl-lab-climate-codebook}
@@ -91,6 +93,19 @@ tabulate_codebook("q33")
 
 Codes used for the question "`{r} var_label(survey$q33) |> str_remove("4\\. ")`".
 :::
+
+##### Major
+
+::: {#tbl-major-codebook}
+```{r}
+#| label: major-codebook
+#| echo: false
+tabulate_codebook("q9")
+```
+
+Codes used for the question "`{r} var_label(survey$q9) |> str_remove("b\\. ")`".
+:::
+:::::
 
 ## Analysis
 
@@ -583,6 +598,10 @@ The target population was undergraduate students during September 2025 to April 
 
 #### Major and Centre of Accessibility
 
+::::: panel-tabset
+
+##### Table
+
 ::: {#tbl-major-and-cfa}
 ```{r}
 #| label: major-and-cfa
@@ -600,7 +619,34 @@ Participant responses in the "Lab accessibility in Science---undergraduate stude
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-<!-- TODO: Add qualitative analysis of Q9 -->
+##### Coded
+
+::: {#fig-major-coded}
+```{r}
+#| label: major-coded
+#| echo: false
+major_coded <- survey |>
+  separate_longer_delim(q9, "; ") |>
+  filter_out(is.na(q9)) |>
+  mutate(q9 = fct_infreq(q9))
+
+major_coded_question <- var_label(survey$q9) |> str_remove("b\\. ")
+major_top_5 <- major_coded |>
+  count(q9)
+
+major_coded |>
+  render_lollipop_graph(q9) +
+  labs(title = major_coded_question, y = NULL) +
+  theme(plot.title = element_textbox_simple(), plot.title.position = "plot")
+```
+
+Coded open-ended responses to the question "`{r} major_coded_question`".
+"`{r} major_top_5$q9[1]`" emerges as the most common code ($n$ = `{r} major_top_5$n[1]`).
+Other codes appeared infrequently, inlcuding "`{r} major_top_5$q9[2]`" ($n$ = `{r} major_top_5$n[2]`), "`{r} major_top_5$q9[3]`" ($n$ = `{r} major_top_5$n[3]`), "`{r} major_top_5$q9[4]`" ($n$ = `{r} major_top_5$n[4]`) and "`{r} major_top_5$q9[5]`" ($n$ = `{r} major_top_5$n[5]`; codebook see @tbl-major-codebook).
+The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+:::::
 
 #### Sense of belonging
 
