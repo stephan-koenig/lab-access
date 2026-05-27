@@ -80,7 +80,7 @@ survey <- load_undergraduate_lab_accessibility_survey()
 
 #### Codebooks
 
-:::::: panel-tabset
+::::::: panel-tabset
 ##### Lab climate
 
 ::: {#tbl-lab-climate-codebook}
@@ -116,7 +116,19 @@ tabulate_codebook("q12")
 
 Codes used for the question "`{r} var_label(survey$q12) |> str_remove("8\\. ")`".
 :::
-::::::
+
+##### Supports
+
+::: {#tbl-supports-codebook}
+```{r}
+#| label: supports-codebook
+#| echo: false
+tabulate_codebook("q14")
+```
+
+Codes used for the question "`{r} var_label(survey$q14) |> str_remove("10\\. ")`".
+:::
+:::::::
 
 ## Analysis
 
@@ -769,6 +781,9 @@ The target population was undergraduate students during September 2025 to April 
 
 #### Supports
 
+::::: panel-tabset
+##### Ranking
+
 ::: {#fig-supports}
 ```{r}
 #| label: supports
@@ -829,4 +844,34 @@ Participant responses to questions about experience with supports in lab courses
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-<!-- TODO: Add qualitative analysis of Q14, Q15 and Q34 -->
+##### Coded
+
+::: {#fig-supports-coded}
+```{r}
+#| label: supports-coded
+#| echo: false
+supports_coded <- survey |>
+  separate_longer_delim(q14, "; ") |>
+  filter_out(is.na(q14)) |>
+  mutate(q14 = fct_infreq(q14))
+
+supports_coded_question <- var_label(survey$q14) |> str_remove("10\\. ")
+supports_top_5 <- supports_coded |>
+  count(q14)
+
+supports_coded |>
+  render_lollipop_graph(q14) +
+  labs(title = supports_coded_question, x = "Frequency [n]", y = NULL) +
+  theme(plot.title = element_textbox_simple(), plot.title.position = "plot")
+```
+
+Coded open-ended responses to the question "`{r} supports_coded_question`".
+The most commonly reported codes were "`{r} supports_top_5$q14[1]`" ($n$ = `{r} supports_top_5$n[1]`), followed by "`{r} supports_top_5$q14[2]`" ($n$ = `{r} supports_top_5$n[2]`).
+Flexibility-related supports, including "`{r} supports_top_5$q14[3]`" ($n$ = `{r} supports_top_5$n[3]`), were also frequently mentioned.
+Less common codes reflected specific challenges or environmental factors, such as academic pressure, stigma around accommodations, and lab climate (codebook see @tbl-supports-codebook).
+The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+:::::
+
+<!-- TODO: Add qualitative analysis of Q15 and Q34 -->
