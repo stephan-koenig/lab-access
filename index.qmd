@@ -80,7 +80,7 @@ survey <- load_undergraduate_lab_accessibility_survey()
 
 #### Codebooks
 
-::::::: panel-tabset
+:::::::: panel-tabset
 ##### Lab climate
 
 ::: {#tbl-lab-climate-codebook}
@@ -128,7 +128,19 @@ tabulate_codebook("q14")
 
 Codes used for the question "`{r} var_label(survey$q14) |> str_remove("10\\. ")`".
 :::
-:::::::
+
+##### Examples
+
+::: {#tbl-examples-codebook}
+```{r}
+#| label: examples-codebook
+#| echo: false
+tabulate_codebook("q15")
+```
+
+Codes used for the question "`{r} var_label(survey$q15) |> str_remove("11\\. ")`".
+:::
+::::::::
 
 ## Analysis
 
@@ -874,4 +886,35 @@ The target population was undergraduate students during September 2025 to April 
 :::
 :::::
 
-<!-- TODO: Add qualitative analysis of Q15 and Q34 -->
+#### General
+
+##### Positive examples
+
+::: {#fig-examples-coded}
+```{r}
+#| label: examples-coded
+#| echo: false
+examples_coded <- survey |>
+  separate_longer_delim(q15, "; ") |>
+  filter_out(is.na(q15)) |>
+  mutate(q15 = fct_infreq(q15))
+
+examples_coded_question <- var_label(survey$q15) |> str_remove("11\\. ")
+examples_top_5 <- examples_coded |>
+  count(q15)
+
+examples_coded |>
+  render_lollipop_graph(q15) +
+  labs(title = examples_coded_question, x = "Frequency [n]", y = NULL) +
+  theme(plot.title = element_textbox_simple(), plot.title.position = "plot")
+```
+
+Coded open-ended responses to the question "`{r} examples_coded_question`".
+"`{r} examples_top_5$q15[1]`" was the most prominent code ($n$ = `{r} examples_top_5$n[1]`), far exceeding all other codes.
+Additional frequently reported supports included "`{r} examples_top_5$q15[2]`" ($n$ = `{r} examples_top_5$n[2]`), "`{r} examples_top_5$q15[3]`" ($n$ = `{r} examples_top_5$n[3]`) and "`{r} examples_top_5$q15[4]`" ($n$ = `{r} examples_top_5$n[4]`).
+Clear expectations, flexible accommodations, and hands-on learning were also commonly noted (codebook see @tbl-examples-codebook).
+The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+
+<!-- TODO: Add qualitative analysis of Q34 -->
