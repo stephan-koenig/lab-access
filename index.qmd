@@ -80,8 +80,7 @@ survey <- load_undergraduate_lab_accessibility_survey()
 
 #### Codebooks
 
-::::: panel-tabset
-
+:::::: panel-tabset
 ##### Lab climate
 
 ::: {#tbl-lab-climate-codebook}
@@ -105,7 +104,19 @@ tabulate_codebook("q9")
 
 Codes used for the question "`{r} var_label(survey$q9) |> str_remove("b\\. ")`".
 :::
-:::::
+
+##### Barriers
+
+::: {#tbl-barriers-codebook}
+```{r}
+#| label: barriers-codebook
+#| echo: false
+tabulate_codebook("q12")
+```
+
+Codes used for the question "`{r} var_label(survey$q12) |> str_remove("8\\. ")`".
+:::
+::::::
 
 ## Analysis
 
@@ -599,7 +610,6 @@ The target population was undergraduate students during September 2025 to April 
 #### Major and Centre of Accessibility
 
 ::::: panel-tabset
-
 ##### Table
 
 ::: {#tbl-major-and-cfa}
@@ -680,7 +690,7 @@ The target population was undergraduate students during September 2025 to April 
 
 #### Barriers
 
-:::::: panel-tabset
+::::::: panel-tabset
 ##### Delivery
 
 ::: {#fig-delivery}
@@ -725,9 +735,37 @@ survey |>
 Participant responses to questions about course demands in lab courses in the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
-::::::
+
+##### Coded
+
+::: {#fig-barriers-coded}
+```{r}
+#| label: barriers-coded
+#| echo: false
+barriers_coded <- survey |>
+  separate_longer_delim(q12, "; ") |>
+  filter_out(is.na(q12)) |>
+  mutate(q12 = fct_infreq(q12))
+
+barriers_coded_question <- var_label(survey$q12) |> str_remove("8\\. ")
+barriers_top_5 <- barriers_coded |>
+  count(q12)
+
+# barriers_coded |>
+#   render_lollipop_graph(q12) +
+#   labs(title = barriers_coded_question, x = "Frequency [n]", y = NULL) +
+#   theme(plot.title = element_textbox_simple(), plot.title.position = "plot")
+```
 
 <!-- TODO: Add qualitative analysis of Q12 -->
+
+Coded open-ended responses to the question "`{r} barriers_coded_question`".
+"`{r} barriers_top_5$q12[1]`" ($n$ = `{r} barriers_top_5$n[1]`), followed by "`{r} barriers_top_5$q12[2]`" ($n$ = `{r} barriers_top_5$n[2]`) and "`{r} barriers_top_5$q12[3]`" ($n$ = `{r} barriers_top_5$n[3]`).
+"`{r} barriers_top_5$q12[4]`" ($n$ = `{r} barriers_top_5$n[4]`) and "`{r} barriers_top_5$q12[5]`" ($n$ = `{r} barriers_top_5$n[5]`) (codebook see @tbl-barriers-codebook).
+The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+:::::::
 
 #### Supports
 
