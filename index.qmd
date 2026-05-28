@@ -80,7 +80,7 @@ survey <- load_undergraduate_lab_accessibility_survey()
 
 #### Codebooks
 
-:::::::: panel-tabset
+::::::::: panel-tabset
 ##### Lab climate
 
 ::: {#tbl-lab-climate-codebook}
@@ -140,7 +140,19 @@ tabulate_codebook("q15")
 
 Codes used for the question "`{r} var_label(survey$q15) |> str_remove("11\\. ")`".
 :::
-::::::::
+
+##### Advice
+
+::: {#tbl-advice-codebook}
+```{r}
+#| label: advice-codebook
+#| echo: false
+tabulate_codebook("q34")
+```
+
+Codes used for the question "`{r} var_label(survey$q34) |> str_remove("12\\. ")`".
+:::
+:::::::::
 
 ## Analysis
 
@@ -888,6 +900,7 @@ The target population was undergraduate students during September 2025 to April 
 
 #### General
 
+::::: panel-tabset
 ##### Positive examples
 
 ::: {#fig-examples-coded}
@@ -917,4 +930,31 @@ The question was part of the "Lab accessibility in Science---undergraduate stude
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-<!-- TODO: Add qualitative analysis of Q34 -->
+##### Advice
+
+::: {#fig-advice-coded}
+```{r}
+#| label: advice-coded
+#| echo: false
+advice_coded <- survey |>
+  separate_longer_delim(q34, "; ") |>
+  filter_out(is.na(q34)) |>
+  mutate(q34 = fct_infreq(q34))
+
+advice_coded_question <- var_label(survey$q34) |> str_remove("12\\. ")
+advice_top_5 <- advice_coded |>
+  count(q34)
+
+advice_coded |>
+  render_lollipop_graph(q34) +
+  labs(title = advice_coded_question, x = "Frequency [n]", y = NULL) +
+  theme(plot.title = element_textbox_simple(), plot.title.position = "plot")
+```
+
+Coded open-ended responses to the question "`{r} advice_coded_question`".
+"`{r} advice_top_5$q34[1]`" ($n$ = `{r} advice_top_5$n[1]`) and "`{r} advice_top_5$q34[2]`" ($n$ = `{r} advice_top_5$n[2]`) identified most frequently.
+"`{r} advice_top_5$q34[3]`" ($n$ = `{r} advice_top_5$n[3]`), "`{r} advice_top_5$q34[4]`" ($n$ = `{r} advice_top_5$n[4]`) and "`{r} advice_top_5$q34[5]`" ($n$ = `{r} advice_top_5$n[5]`) were also commonly reported (codebook see @tbl-advice-codebook).
+The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
+The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+:::::
