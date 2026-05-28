@@ -10,3 +10,4 @@ data/raw/
 **/*.quarto_ipynb
 
 outputs
+_book

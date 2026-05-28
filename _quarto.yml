@@ -1,9 +1,11 @@
 project:
-  type: default
-  render:
-    - "*.qmd"
-    - "!LICENSE.md"
-  output-dir: outputs
+  type: book
+
+book:
+  title: "Lab accessibility in the Faculty of Science"
+  author: "Skylight team"
+  chapters:
+    - index.qmd
 
 format:
   html:
