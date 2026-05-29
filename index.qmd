@@ -74,7 +74,7 @@ survey |>
 
 ## Climate in laboratory courses
 
-::::: panel-tabset
+:::::: panel-tabset
 ### Likert
 
 ::: {#fig-lab-climate-likert}
@@ -130,7 +130,19 @@ Less frequently reported codes captured negative or situational experiences such
 The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
-:::::
+
+### Codebook
+
+::: {#tbl-lab-climate-codebook}
+```{r}
+#| label: lab-climate-codebook
+#| echo: false
+tabulate_codebook("q33")
+```
+
+Codes used for the question "`{r} var_label(survey$q33) |> str_remove("4\\. ")`".
+:::
+::::::
 
 ## Accomodation needs
 
@@ -219,7 +231,7 @@ The target population was undergraduate students during September 2025 to April 
 
 ## Major and Centre of Accessibility
 
-::::: panel-tabset
+:::::: panel-tabset
 ### Table
 
 ::: {#tbl-major-and-cfa}
@@ -266,7 +278,19 @@ Other codes appeared infrequently, inlcuding "`{r} major_top_5$q9[2]`" ($n$ = `{
 The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
-:::::
+
+### Codebook
+
+::: {#tbl-major-codebook}
+```{r}
+#| label: major-codebook
+#| echo: false
+tabulate_codebook("q9")
+```
+
+Codes used for the question "`{r} var_label(survey$q9) |> str_remove("b\\. ")`".
+:::
+::::::
 
 ## Sense of belonging
 
@@ -300,7 +324,7 @@ The target population was undergraduate students during September 2025 to April 
 
 ## Barriers
 
-::::::: panel-tabset
+:::::::: panel-tabset
 ### Delivery
 
 ::: {#fig-delivery}
@@ -375,11 +399,23 @@ Coded open-ended responses to the question "`{r} barriers_coded_question`".
 The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
-:::::::
+
+### Codebook
+
+::: {#tbl-barriers-codebook}
+```{r}
+#| label: barriers-codebook
+#| echo: false
+tabulate_codebook("q12")
+```
+
+Codes used for the question "`{r} var_label(survey$q12) |> str_remove("8\\. ")`".
+:::
+::::::::
 
 ## Supports
 
-::::: panel-tabset
+:::::: panel-tabset
 ### Ranking
 
 ::: {#fig-supports}
@@ -470,12 +506,24 @@ Less common codes reflected specific challenges or environmental factors, such a
 The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
-:::::
+
+### Codebook
+
+::: {#tbl-supports-codebook}
+```{r}
+#| label: supports-codebook
+#| echo: false
+tabulate_codebook("q14")
+```
+
+Codes used for the question "`{r} var_label(survey$q14) |> str_remove("10\\. ")`".
+:::
+::::::
 
 ## General
 
-::::: panel-tabset
-### Positive examples
+::::::: panel-tabset
+### Examples
 
 ::: {#fig-examples-coded}
 ```{r}
@@ -502,6 +550,18 @@ Additional frequently reported supports included "`{r} examples_top_5$q15[2]`" (
 Clear expectations, flexible accommodations, and hands-on learning were also commonly noted (codebook see @tbl-examples-codebook).
 The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
+:::
+
+### Examples codebook
+
+::: {#tbl-examples-codebook}
+```{r}
+#| label: examples-codebook
+#| echo: false
+tabulate_codebook("q15")
+```
+
+Codes used for the question "`{r} var_label(survey$q15) |> str_remove("11\\. ")`".
 :::
 
 ### Advice
@@ -531,4 +591,16 @@ Coded open-ended responses to the question "`{r} advice_coded_question`".
 The question was part of the "Lab accessibility in Science---undergraduate student survey" conducted by Skylight in March 2026.
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
-:::::
+
+### Advice codebook
+
+::: {#tbl-advice-codebook}
+```{r}
+#| label: advice-codebook
+#| echo: false
+tabulate_codebook("q34")
+```
+
+Codes used for the question "`{r} var_label(survey$q34) |> str_remove("12\\. ")`".
+:::
+:::::::

@@ -1,16 +1,12 @@
 # Data
 
-```{r}
-#| label: setup
-#| echo: false
-#| message: false
-library(fs)
-library(labelled)
-library(stringr)
+## Lab accessibility undergraduate survey
 
-dir_walk(here::here("R"), source)
-survey <- load_undergraduate_lab_accessibility_survey()
-```
+`survey`:
+
+- Qualtrics data from "Lab accessibility in Science---undergraduate student survey March 2026" conducted by Skylight
+- The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS)
+- All student responses were systematically reviewed and coded by Alexis Gonzalez using an inductive coding approach. Codes were generated based on patterns and themes identified within the responses. In some cases, multiple codes were applied to a single response to more accurately capture the complexity of students' ideas. A codebook was developed to document code definitions and ensure consistency throughout the analysis. Following coding, related codes were grouped into broader categories to support thematic analysis. In this vein, some codes were used in more than one question (note: examples were omitted when the code was used more than once).
 
 ## Centre for Accessibility
 
@@ -39,87 +35,3 @@ Data was provided by Michael Segovia, project manager at the Centre for Accessib
 
 - File: `03_CfA Edits - Science_lab_counts_2024W_2025-07-10.xlsx`
 - Number of students with accommodations registered in at least one course section designated as "Laboratory"
-
-## Lab accessibility undergraduate survey
-
-`survey`:
-
-- Qualtrics data from "Lab accessibility in Science---undergraduate student survey March 2026" conducted by Skylight
-- The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS)
-- All student responses were systematically reviewed and coded by Alexis Gonzalez using an inductive coding approach. Codes were generated based on patterns and themes identified within the responses. In some cases, multiple codes were applied to a single response to more accurately capture the complexity of students' ideas. A codebook was developed to document code definitions and ensure consistency throughout the analysis. Following coding, related codes were grouped into broader categories to support thematic analysis. In this vein, some codes were used in more than one question (note: examples were omitted when the code was used more than once).
-
-### Codebooks {.unnumbered}
-
-::::::::: panel-tabset
-#### Lab climate
-
-::: {#tbl-lab-climate-codebook}
-```{r}
-#| label: lab-climate-codebook
-#| echo: false
-tabulate_codebook("q33")
-```
-
-Codes used for the question "`{r} var_label(survey$q33) |> str_remove("4\\. ")`".
-:::
-
-#### Major
-
-::: {#tbl-major-codebook}
-```{r}
-#| label: major-codebook
-#| echo: false
-tabulate_codebook("q9")
-```
-
-Codes used for the question "`{r} var_label(survey$q9) |> str_remove("b\\. ")`".
-:::
-
-#### Barriers
-
-::: {#tbl-barriers-codebook}
-```{r}
-#| label: barriers-codebook
-#| echo: false
-tabulate_codebook("q12")
-```
-
-Codes used for the question "`{r} var_label(survey$q12) |> str_remove("8\\. ")`".
-:::
-
-#### Supports
-
-::: {#tbl-supports-codebook}
-```{r}
-#| label: supports-codebook
-#| echo: false
-tabulate_codebook("q14")
-```
-
-Codes used for the question "`{r} var_label(survey$q14) |> str_remove("10\\. ")`".
-:::
-
-#### Examples
-
-::: {#tbl-examples-codebook}
-```{r}
-#| label: examples-codebook
-#| echo: false
-tabulate_codebook("q15")
-```
-
-Codes used for the question "`{r} var_label(survey$q15) |> str_remove("11\\. ")`".
-:::
-
-#### Advice
-
-::: {#tbl-advice-codebook}
-```{r}
-#| label: advice-codebook
-#| echo: false
-tabulate_codebook("q34")
-```
-
-Codes used for the question "`{r} var_label(survey$q34) |> str_remove("12\\. ")`".
-:::
-:::::::::
