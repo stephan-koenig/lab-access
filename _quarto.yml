@@ -6,6 +6,8 @@ book:
   author: "Skylight team"
   chapters:
     - index.qmd
+    - cfa.qmd
+    - data.qmd
 
 format:
   html:

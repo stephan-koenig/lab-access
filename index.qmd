@@ -1,4 +1,4 @@
-# Lab accessibility report
+# Lab accessibility undergraduate survey
 
 ```{r}
 #| label: setup
@@ -12,443 +12,23 @@ library(fs)
 library(ggplot2)
 library(ggstats)
 library(ggtext)
-library(glue)
-library(gt)
 library(gtsummary)
 library(labelled)
-library(plotly)
-library(purrr)
 library(scales)
 library(stringr)
 library(tidyr)
 
 dir_walk(here::here("R"), source)
-```
-
-## Data
-
-### Centre for Accessibility
-
-Data was provided by Michael Segovia, project manager at the Centre for Accessibility (CfA) for working with Skylight.
-
-`students`:
-
-- File: `01_Active Students in Faculty of Science + program info September 2024 - August 2025.xlsx`
-- ClockWork data
-- Period: September 2024 -- August 2025
-- CfA did not start collecting program-related information in their system until mid- to late-2025. As a result, only students who remained active in the CfA system at that time appear in this data snapshot. Students who may have graduated and/or de-activated prior to this snapshot would not be included.
-- Entries for students in the Faculty of Science registered with CfA
-
-`lab_requests`:
-
-- File: `02_Students with accommodations in Laboratory sections September 2024 - August 2025.xlsx`
-- ClockWork data
-- Period: September 2024 -- August 2025
-- CfA did not start collecting program-related information in their system until mid- to late-2025. As a result, only students who remained active in the CfA system at that time appear in this data snapshot. Students who may have graduated and/or de-activated prior to this snapshot would not be included.
-- Number of students with accommodations registered in at least one course section designated as "Laboratory"
-- `status` of student's accommodation letter request
-  - `No Accommodation Request` students was eligible for accommodations, but did not download a letter
-  - `InstructorInfoMissing` indicates that no instructor record is available for that particular section on Workday (probably equivalent to `No Accommodation Request`, will be interpreted as such in analysis below)
-
-`lab_counts`:
-
-- File: `03_CfA Edits - Science_lab_counts_2024W_2025-07-10.xlsx`
-- Number of students with accommodations registered in at least one course section designated as "Laboratory"
-
-### Lab accessibility undergraduate survey
-
-`survey`:
-
-- Qualtrics data from "Lab accessibility in Science---undergraduate student survey March 2026" conducted by Skylight
-- The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS)
-- All student responses were systematically reviewed and coded by Alexis Gonzalez using an inductive coding approach. Codes were generated based on patterns and themes identified within the responses. In some cases, multiple codes were applied to a single response to more accurately capture the complexity of students' ideas. A codebook was developed to document code definitions and ensure consistency throughout the analysis. Following coding, related codes were grouped into broader categories to support thematic analysis. In this vein, some codes were used in more than one question (note: examples were omitted when the code was used more than once).
-
-```{r}
-#| label: load-data
-#| echo: false
-students <- load_students()
-lab_requests <- load_lab_requests()
-lab_counts <- load_lab_counts()
 survey <- load_undergraduate_lab_accessibility_survey()
 ```
 
-#### Codebooks
-
-::::::::: panel-tabset
-##### Lab climate
-
-::: {#tbl-lab-climate-codebook}
-```{r}
-#| label: lab-climate-codebook
-#| echo: false
-tabulate_codebook("q33")
-```
-
-Codes used for the question "`{r} var_label(survey$q33) |> str_remove("4\\. ")`".
-:::
-
-##### Major
-
-::: {#tbl-major-codebook}
-```{r}
-#| label: major-codebook
-#| echo: false
-tabulate_codebook("q9")
-```
-
-Codes used for the question "`{r} var_label(survey$q9) |> str_remove("b\\. ")`".
-:::
-
-##### Barriers
-
-::: {#tbl-barriers-codebook}
-```{r}
-#| label: barriers-codebook
-#| echo: false
-tabulate_codebook("q12")
-```
-
-Codes used for the question "`{r} var_label(survey$q12) |> str_remove("8\\. ")`".
-:::
-
-##### Supports
-
-::: {#tbl-supports-codebook}
-```{r}
-#| label: supports-codebook
-#| echo: false
-tabulate_codebook("q14")
-```
-
-Codes used for the question "`{r} var_label(survey$q14) |> str_remove("10\\. ")`".
-:::
-
-##### Examples
-
-::: {#tbl-examples-codebook}
-```{r}
-#| label: examples-codebook
-#| echo: false
-tabulate_codebook("q15")
-```
-
-Codes used for the question "`{r} var_label(survey$q15) |> str_remove("11\\. ")`".
-:::
-
-##### Advice
-
-::: {#tbl-advice-codebook}
-```{r}
-#| label: advice-codebook
-#| echo: false
-tabulate_codebook("q34")
-```
-
-Codes used for the question "`{r} var_label(survey$q34) |> str_remove("12\\. ")`".
-:::
-:::::::::
-
-## Analysis
-
-### Centre for Accessibility
-
-#### FoS students registered with CfA
-
-::::::: panel-tabset
-##### Program (plot)
-
-::: {#program-vs-specialization}
-I decided to collate the data by program and count a student in a combined specialization once for each program (for example, a student in "Combined Major in Computer Science, Biology" is counted once for "Computer Science" and once for "Biology".) See @tbl-students-by-specialization for a more granular view by specialization.
-:::
-
-{{< contents program-vs-specialization >}}
-
-::: {#fig-students-by-program}
-```{r}
-#| label: students-by-program-plot
-#| echo: false
-students_by_program <- students |>
-  select(program_one, program_two) |>
-  pivot_longer(
-    everything(),
-    names_to = NULL,
-    values_to = "program",
-    values_drop_na = TRUE
-  ) |>
-  set_variable_labels(
-    program = "Program"
-  )
-
-students_by_program |>
-  render_lollipop_graph(program)
-```
-
-[Faculty of Science students registered with the Centre for Accessibility by program ($N = `{r} nrow(students)`$, but students in combined programs are counted double).]{#students-by-program}{{< contents students-by-program >}} Same data as in @tbl-students-by-program as a plot.
-:::
-
-##### Program (table)
-
-{{< contents program-vs-specialization >}}
-
-::: {#tbl-students-by-program}
-```{r}
-#| label: students-by-program-table
-#| echo: false
-students_by_program |>
-  tbl_summary(include = program)
-```
-
-{{< contents students-by-program >}} Same data as in @fig-students-by-program as a table.
-:::
-
-##### Specialization
-
-This table shows the unprocessed data, where the different combinations of "Major", "Honours" and "Combined" choices result in many different specializations.
-
-::: {#tbl-students-by-specialization}
-```{r}
-#| label: students-by-specialization
-#| echo: false
-students |>
-  mutate(
-    program_of_study_name = replace_values(
-      program_of_study_name,
-      "Bachelor of Science (Vancouver)" ~ "First year B.Sc."
-    )
-  ) |>
-  set_variable_labels(
-    program_of_study_name = "Specialization"
-  ) |>
-  tbl_summary(include = program_of_study_name)
-```
-
-Faculty of Science students registered with the Centre for Accessibility by specialization.
-:::
-:::::::
-
-#### FoS students registered with CfA in laboratory courses
-
-In general, requests for accomodations by FoS students in courses got all approved and the data contains no examples when a request was rejected.
-
-:::::: panel-tabset
-##### Faculty-level
-
-::: {#tbl-requests}
-```{r}
-#| label: requests
-#| echo: false
-lab_requests |>
-  # filter(in_ubc_v_faculty_of_science) |>
-  mutate(
-    course_faculty = recode_values(
-      in_ubc_v_faculty_of_science,
-      TRUE ~ "FoS",
-      FALSE ~ "non-FoS"
-    ),
-    status = replace_values(
-      status,
-      # `InstructorInfoMissing` probably means a student did no make a request
-      "InstructorInfoMissing" ~ "No Accommodation Request",
-      "PendingWaitingForStudent" ~ "Pending---Waiting For Student"
-    )
-  ) |>
-  count(course_faculty, status) |>
-  gt(
-    groupname_col = "course_faculty",
-    row_group_as_column = TRUE
-  ) |>
-  summary_rows(
-    columns = n,
-    fns = list(label = "Total", id = "total", fn = "sum"),
-    missing_text = ""
-  ) |>
-  fmt_markdown() |>
-  tab_stubhead("Faculty offering course") |>
-  cols_label(
-    status = "Request status",
-    n = "FoS enrollments registered with CfA"
-  ) |>
-  tab_style(
-    style = list(
-      cell_text(weight = "bold")
-    ),
-    locations = list(
-      cells_column_labels(),
-      cells_column_spanners(),
-      cells_stub_summary(),
-      cells_stubhead()
-    )
-  )
-```
-
-About half of the Faculty of Science students registered with the Centre for Accessibility requested accommodations in lab courses.
-All of these requests were approved.
-:::
-
-##### Subject-level
-
-::: {#fig-requests-by-subject}
-```{r}
-#| label: requests-by-program
-#| echo: false
-approved <- lab_requests |>
-  filter(in_ubc_v_faculty_of_science) |>
-  mutate(
-    status = status == "Approved"
-  ) |>
-  summarize(
-    registered_n = n(),
-    requests_n = sum(status),
-    .by = c(subject)
-  )
-
-students_by_subject <- lab_counts |>
-  summarize(
-    total_enrolled = sum(total_enrolled),
-    .by = c(subject)
-  )
-
-approved |>
-  inner_join(students_by_subject, by = join_by(subject)) |>
-  mutate(
-    registered_proportion = registered_n / total_enrolled,
-    request_proportion = requests_n / total_enrolled
-  ) |>
-  select(subject, ends_with("proportion")) |>
-  pivot_longer(
-    ends_with("proportion"),
-    names_to = "type",
-    names_pattern = "(.*)_proportion",
-    values_to = "proportion"
-  ) |>
-  ggplot(aes(x = proportion, y = fct_rev(subject), fill = type)) +
-  geom_bar(position = "identity", stat = "identity", alpha = 0.3) +
-  scale_x_continuous(labels = percent) +
-  labs(x = "Proportion", y = "Subject")
-```
-
-Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA) in each subject.
-All numbers are relative to total enrollment in courses.
-A single student might be represented multiple times across these data as they might be enrolled in more than one course.
-Registered, percentage of FoS students registered with CfA relative to total enrollment; Requests, percentage of FoS students registered with CfA requesting accomodations relative to total enrollment.
-:::
-
-##### Course-level
-
-I think FoS courses with close to 0 or 100% request rate would be of particular interest.
-What does it mean if students do not ask for accomodations?
-Are their needs already met?
-Or do they feel like they can't ask for anything?
-Conversely, when students readily ask for accomodations is it a sign of a class climate that encourages them to make their needs known?
-Or does it indicate that things are so dire that they feel compelled to formally make requests to find at least some relief?
-
-I decided to show the data by the number of registered students since extreme values (of 0 or a 100%) are more likely in courses when their number is small.
-
-::: {#fig-requests-by-course}
-```{r}
-#| label: requests-by-course
-#| echo: false
-approved <- lab_requests |>
-  filter(in_ubc_v_faculty_of_science) |>
-  mutate(
-    status = status == "Approved"
-  ) |>
-  summarize(
-    registered_n = n(),
-    requests_n = sum(status),
-    requests_proportion = requests_n / registered_n,
-    .by = c(subject, course)
-  ) |>
-  arrange(subject, course)
-
-overall_requests_proportion <-
-  sum(approved$requests_n) /
-  sum(approved$registered_n)
-
-approved_by_course <- approved |>
-  ggplot(
-    aes(
-      x = registered_n,
-      y = requests_proportion,
-      text = glue(
-        "{subject} {course}<br>",
-        "CfA-registered students: {registered_n}<br>",
-        "Requests: {requests_n} ({vec_fmt_percent(requests_proportion)})"
-      )
-    )
-  ) +
-  geom_hline(yintercept = overall_requests_proportion, colour = "pink") +
-  geom_point(alpha = 0.5) +
-  scale_y_continuous(labels = label_percent(suffix = "")) +
-  facet_wrap(vars(subject)) +
-  theme_minimal() +
-  labs(x = "Registered [n]", y = "Requests [%]")
-
-ggplotly(approved_by_course, tooltip = "text")
-```
-
-Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA).
-Registered \[n\], number of FoS students registered with CfA in a given course; Requests \[%\], percentage of those students requesting accomodations; pink horizontal line, overall percentage (`{r} percent(overall_requests_proportion)`) of those students requesting accommodations across all FoS lab courses.
-:::
-::::::
-
-#### Overall students registered with CFA in FoS laboratory courses
-
-::: {#fig-registered-students-in-fos-labs}
-```{r}
-#| label: registered-students-in-fos-labs
-#| echo: false
-cfa_students_in_fos_labs <- lab_counts |>
-  inner_join(approved, by = join_by(subject, course)) |>
-  mutate(
-    non_fos_proportion = (cfa_students_n - registered_n) / total_enrolled,
-    fos_proportion = registered_n / total_enrolled
-  ) |>
-  ggplot(
-    aes(
-      x = non_fos_proportion,
-      y = fos_proportion,
-      text = glue(
-        "{subject} {course}<br>",
-        "Total enrolment: {total_enrolled}<br>",
-        "Total CfA-registered students: {cfa_students_n}<br>",
-        "FoS CfA-registered students: {registered_n} ",
-        "({vec_fmt_percent(fos_proportion)})<br>",
-        "Other CfA-registered students: {cfa_students_n - registered_n} ",
-        "({vec_fmt_percent(non_fos_proportion)})<br>"
-      )
-    )
-  ) +
-  geom_abline(slope = 1, intercept = 0, colour = "grey") +
-  geom_point(alpha = 0.5) +
-  scale_x_continuous(label = label_percent(suffix = ""), limits = c(0, 0.3)) +
-  scale_y_continuous(label = label_percent(suffix = ""), limits = c(0, 0.3)) +
-  coord_fixed() +
-  facet_wrap(vars(subject)) +
-  theme_minimal() +
-  labs(
-    x = "FoS CfA-registered students [%]",
-    y = "CfA-registered students other faculties [%]"
-  )
-
-ggplotly(cfa_students_in_fos_labs, tooltip = "text")
-```
-
-CfA-registered students in the Faculty of Science (FoS) and other faculties enrolled in FoS laboratory courses.
-FoS CfA-registered students \[%\], proportion of FoS CfA-registered students; CfA-registered students other faculties \[%\], proportion of CfA-registered students in other faculties.
-Each data point represents one course, and if it is located on or close to the diagonal line, the proportion of CfA-students from within and outside of FoS are about the same.
-Courses below the line had more FoS CfA-students than from other faculties, and above the line those with more from other faculties than FoS.
-:::
-
-### Lab accessibility undergraduate survey
-
-#### Program area and progress
+## Program area and progress
 
 The following data show program information of students who participated in the survey.
 It would be of interest to get total student numbers in each program to see if the survey is a representative sample.
 
 ::::::: panel-tabset
-#### Plot
+### Plot
 
 ::::: {#fig-program-area-and-progress layout="[[1], [1]]"}
 ::: {#fig-program-area}
@@ -477,7 +57,7 @@ Program progress
 {{< contents program-area-and-progress >}} Figure of the same data as in @tbl-program-area-and-progress.
 :::::
 
-#### Table
+### Table
 
 ::: {#tbl-program-area-and-progress}
 ```{r}
@@ -492,10 +72,10 @@ survey |>
 :::
 :::::::
 
-#### Climate in laboratory courses
+## Climate in laboratory courses
 
 ::::: panel-tabset
-##### Likert
+### Likert
 
 ::: {#fig-lab-climate-likert}
 ```{r}
@@ -522,7 +102,7 @@ Questions focusing on inclusion and belonging in the "Lab accessibility in Scien
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-##### Coded
+### Coded
 
 ::: {#fig-lab-climate-coded}
 ```{r}
@@ -552,10 +132,10 @@ The target population was undergraduate students during September 2025 to April 
 :::
 :::::
 
-#### Accomodation needs
+## Accomodation needs
 
 ::::: panel-tabset
-##### General
+### General
 
 ::: {#fig-accomodation-needs}
 ```{r}
@@ -598,7 +178,7 @@ Participant responses to the multiple selection question "`{r} survey$q6 |> var_
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-##### Other
+### Other
 
 ::: {#fig-other-accomodation-needs}
 ```{r}
@@ -637,10 +217,10 @@ The target population was undergraduate students during September 2025 to April 
 :::
 :::::
 
-#### Major and Centre of Accessibility
+## Major and Centre of Accessibility
 
 ::::: panel-tabset
-##### Table
+### Table
 
 ::: {#tbl-major-and-cfa}
 ```{r}
@@ -659,7 +239,7 @@ Participant responses in the "Lab accessibility in Science---undergraduate stude
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-##### Coded
+### Coded
 
 ::: {#fig-major-coded}
 ```{r}
@@ -688,7 +268,7 @@ The target population was undergraduate students during September 2025 to April 
 :::
 :::::
 
-#### Sense of belonging
+## Sense of belonging
 
 ::: {#fig-major-belonging}
 ```{r}
@@ -718,10 +298,10 @@ Participant responses to questions about their sense of belonging in the "Lab ac
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-#### Barriers
+## Barriers
 
 ::::::: panel-tabset
-##### Delivery
+### Delivery
 
 ::: {#fig-delivery}
 ```{r}
@@ -736,7 +316,7 @@ Participant responses to questions about course delivery barriers in lab courses
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-##### Environment
+### Environment
 
 ::: {#fig-environment}
 ```{r}
@@ -751,7 +331,7 @@ Participant responses to questions about environmental barriers in lab courses i
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-##### Demands
+### Demands
 
 ::: {#fig-demands}
 ```{r}
@@ -766,7 +346,7 @@ Participant responses to questions about course demands in lab courses in the "L
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-##### Coded
+### Coded
 
 ::: {#fig-barriers-coded}
 ```{r}
@@ -797,10 +377,10 @@ The target population was undergraduate students during September 2025 to April 
 :::
 :::::::
 
-#### Supports
+## Supports
 
 ::::: panel-tabset
-##### Ranking
+### Ranking
 
 ::: {#fig-supports}
 ```{r}
@@ -862,7 +442,7 @@ Participant responses to questions about experience with supports in lab courses
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-##### Coded
+### Coded
 
 ::: {#fig-supports-coded}
 ```{r}
@@ -892,10 +472,10 @@ The target population was undergraduate students during September 2025 to April 
 :::
 :::::
 
-#### General
+## General
 
 ::::: panel-tabset
-##### Positive examples
+### Positive examples
 
 ::: {#fig-examples-coded}
 ```{r}
@@ -924,7 +504,7 @@ The question was part of the "Lab accessibility in Science---undergraduate stude
 The target population was undergraduate students during September 2025 to April 2026 in the Faculty of Science (FoS).
 :::
 
-##### Advice
+### Advice
 
 ::: {#fig-advice-coded}
 ```{r}

@@ -1,0 +1,313 @@
+# Centre for Accessibility
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+library(conflicted)
+library(dplyr)
+conflicts_prefer(dplyr::filter)
+library(forcats)
+library(fs)
+library(ggplot2)
+library(glue)
+library(gt)
+library(gtsummary)
+library(labelled)
+library(plotly)
+library(scales)
+library(tidyr)
+
+dir_walk(here::here("R"), source)
+students <- load_students()
+lab_requests <- load_lab_requests()
+lab_counts <- load_lab_counts()
+```
+
+## FoS students registered with CfA
+
+::::::: panel-tabset
+### Program (plot)
+
+::: {#program-vs-specialization}
+I decided to collate the data by program and count a student in a combined specialization once for each program (for example, a student in "Combined Major in Computer Science, Biology" is counted once for "Computer Science" and once for "Biology".) See @tbl-students-by-specialization for a more granular view by specialization.
+:::
+
+{{< contents program-vs-specialization >}}
+
+::: {#fig-students-by-program}
+```{r}
+#| label: students-by-program-plot
+#| echo: false
+students_by_program <- students |>
+  select(program_one, program_two) |>
+  pivot_longer(
+    everything(),
+    names_to = NULL,
+    values_to = "program",
+    values_drop_na = TRUE
+  ) |>
+  set_variable_labels(
+    program = "Program"
+  )
+
+students_by_program |>
+  render_lollipop_graph(program)
+```
+
+[Faculty of Science students registered with the Centre for Accessibility by program ($N = `{r} nrow(students)`$, but students in combined programs are counted double).]{#students-by-program}{{< contents students-by-program >}} Same data as in @tbl-students-by-program as a plot.
+:::
+
+### Program (table)
+
+{{< contents program-vs-specialization >}}
+
+::: {#tbl-students-by-program}
+```{r}
+#| label: students-by-program-table
+#| echo: false
+students_by_program |>
+  tbl_summary(include = program)
+```
+
+{{< contents students-by-program >}} Same data as in @fig-students-by-program as a table.
+:::
+
+### Specialization
+
+This table shows the unprocessed data, where the different combinations of "Major", "Honours" and "Combined" choices result in many different specializations.
+
+::: {#tbl-students-by-specialization}
+```{r}
+#| label: students-by-specialization
+#| echo: false
+students |>
+  mutate(
+    program_of_study_name = replace_values(
+      program_of_study_name,
+      "Bachelor of Science (Vancouver)" ~ "First year B.Sc."
+    )
+  ) |>
+  set_variable_labels(
+    program_of_study_name = "Specialization"
+  ) |>
+  tbl_summary(include = program_of_study_name)
+```
+
+Faculty of Science students registered with the Centre for Accessibility by specialization.
+:::
+:::::::
+
+## FoS students registered with CfA in laboratory courses
+
+In general, requests for accomodations by FoS students in courses got all approved and the data contains no examples when a request was rejected.
+
+:::::: panel-tabset
+### Faculty-level
+
+::: {#tbl-requests}
+```{r}
+#| label: requests
+#| echo: false
+lab_requests |>
+  # filter(in_ubc_v_faculty_of_science) |>
+  mutate(
+    course_faculty = recode_values(
+      in_ubc_v_faculty_of_science,
+      TRUE ~ "FoS",
+      FALSE ~ "non-FoS"
+    ),
+    status = replace_values(
+      status,
+      # `InstructorInfoMissing` probably means a student did no make a request
+      "InstructorInfoMissing" ~ "No Accommodation Request",
+      "PendingWaitingForStudent" ~ "Pending---Waiting For Student"
+    )
+  ) |>
+  count(course_faculty, status) |>
+  gt(
+    groupname_col = "course_faculty",
+    row_group_as_column = TRUE
+  ) |>
+  summary_rows(
+    columns = n,
+    fns = list(label = "Total", id = "total", fn = "sum"),
+    missing_text = ""
+  ) |>
+  fmt_markdown() |>
+  tab_stubhead("Faculty offering course") |>
+  cols_label(
+    status = "Request status",
+    n = "FoS enrollments registered with CfA"
+  ) |>
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = list(
+      cells_column_labels(),
+      cells_column_spanners(),
+      cells_stub_summary(),
+      cells_stubhead()
+    )
+  )
+```
+
+About half of the Faculty of Science students registered with the Centre for Accessibility requested accommodations in lab courses.
+All of these requests were approved.
+:::
+
+### Subject-level
+
+::: {#fig-requests-by-subject}
+```{r}
+#| label: requests-by-program
+#| echo: false
+approved <- lab_requests |>
+  filter(in_ubc_v_faculty_of_science) |>
+  mutate(
+    status = status == "Approved"
+  ) |>
+  summarize(
+    registered_n = n(),
+    requests_n = sum(status),
+    .by = c(subject)
+  )
+
+students_by_subject <- lab_counts |>
+  summarize(
+    total_enrolled = sum(total_enrolled),
+    .by = c(subject)
+  )
+
+approved |>
+  inner_join(students_by_subject, by = join_by(subject)) |>
+  mutate(
+    registered_proportion = registered_n / total_enrolled,
+    request_proportion = requests_n / total_enrolled
+  ) |>
+  select(subject, ends_with("proportion")) |>
+  pivot_longer(
+    ends_with("proportion"),
+    names_to = "type",
+    names_pattern = "(.*)_proportion",
+    values_to = "proportion"
+  ) |>
+  ggplot(aes(x = proportion, y = fct_rev(subject), fill = type)) +
+  geom_bar(position = "identity", stat = "identity", alpha = 0.3) +
+  scale_x_continuous(labels = percent) +
+  labs(x = "Proportion", y = "Subject")
+```
+
+Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA) in each subject.
+All numbers are relative to total enrollment in courses.
+A single student might be represented multiple times across these data as they might be enrolled in more than one course.
+Registered, percentage of FoS students registered with CfA relative to total enrollment; Requests, percentage of FoS students registered with CfA requesting accomodations relative to total enrollment.
+:::
+
+### Course-level
+
+I think FoS courses with close to 0 or 100% request rate would be of particular interest.
+What does it mean if students do not ask for accomodations?
+Are their needs already met?
+Or do they feel like they can't ask for anything?
+Conversely, when students readily ask for accomodations is it a sign of a class climate that encourages them to make their needs known?
+Or does it indicate that things are so dire that they feel compelled to formally make requests to find at least some relief?
+
+I decided to show the data by the number of registered students since extreme values (of 0 or a 100%) are more likely in courses when their number is small.
+
+::: {#fig-requests-by-course}
+```{r}
+#| label: requests-by-course
+#| echo: false
+approved <- lab_requests |>
+  filter(in_ubc_v_faculty_of_science) |>
+  mutate(
+    status = status == "Approved"
+  ) |>
+  summarize(
+    registered_n = n(),
+    requests_n = sum(status),
+    requests_proportion = requests_n / registered_n,
+    .by = c(subject, course)
+  ) |>
+  arrange(subject, course)
+
+overall_requests_proportion <-
+  sum(approved$requests_n) /
+  sum(approved$registered_n)
+
+approved_by_course <- approved |>
+  ggplot(
+    aes(
+      x = registered_n,
+      y = requests_proportion,
+      text = glue(
+        "{subject} {course}<br>",
+        "CfA-registered students: {registered_n}<br>",
+        "Requests: {requests_n} ({vec_fmt_percent(requests_proportion)})"
+      )
+    )
+  ) +
+  geom_hline(yintercept = overall_requests_proportion, colour = "pink") +
+  geom_point(alpha = 0.5) +
+  scale_y_continuous(labels = label_percent(suffix = "")) +
+  facet_wrap(vars(subject)) +
+  theme_minimal() +
+  labs(x = "Registered [n]", y = "Requests [%]")
+
+ggplotly(approved_by_course, tooltip = "text")
+```
+
+Accomodation requests (all of which were approved) in Faculty of Science (FoS) lab courses by FoS students registered with the Centre for Accessibility (CfA).
+Registered \[n\], number of FoS students registered with CfA in a given course; Requests \[%\], percentage of those students requesting accomodations; pink horizontal line, overall percentage (`{r} percent(overall_requests_proportion)`) of those students requesting accommodations across all FoS lab courses.
+:::
+::::::
+
+## Overall students registered with CFA in FoS laboratory courses
+
+::: {#fig-registered-students-in-fos-labs}
+```{r}
+#| label: registered-students-in-fos-labs
+#| echo: false
+cfa_students_in_fos_labs <- lab_counts |>
+  inner_join(approved, by = join_by(subject, course)) |>
+  mutate(
+    non_fos_proportion = (cfa_students_n - registered_n) / total_enrolled,
+    fos_proportion = registered_n / total_enrolled
+  ) |>
+  ggplot(
+    aes(
+      x = non_fos_proportion,
+      y = fos_proportion,
+      text = glue(
+        "{subject} {course}<br>",
+        "Total enrolment: {total_enrolled}<br>",
+        "Total CfA-registered students: {cfa_students_n}<br>",
+        "FoS CfA-registered students: {registered_n} ",
+        "({vec_fmt_percent(fos_proportion)})<br>",
+        "Other CfA-registered students: {cfa_students_n - registered_n} ",
+        "({vec_fmt_percent(non_fos_proportion)})<br>"
+      )
+    )
+  ) +
+  geom_abline(slope = 1, intercept = 0, colour = "grey") +
+  geom_point(alpha = 0.5) +
+  scale_x_continuous(label = label_percent(suffix = ""), limits = c(0, 0.3)) +
+  scale_y_continuous(label = label_percent(suffix = ""), limits = c(0, 0.3)) +
+  coord_fixed() +
+  facet_wrap(vars(subject)) +
+  theme_minimal() +
+  labs(
+    x = "FoS CfA-registered students [%]",
+    y = "CfA-registered students other faculties [%]"
+  )
+
+ggplotly(cfa_students_in_fos_labs, tooltip = "text")
+```
+
+CfA-registered students in the Faculty of Science (FoS) and other faculties enrolled in FoS laboratory courses.
+FoS CfA-registered students \[%\], proportion of FoS CfA-registered students; CfA-registered students other faculties \[%\], proportion of CfA-registered students in other faculties.
+Each data point represents one course, and if it is located on or close to the diagonal line, the proportion of CfA-students from within and outside of FoS are about the same.
+Courses below the line had more FoS CfA-students than from other faculties, and above the line those with more from other faculties than FoS.
+:::
